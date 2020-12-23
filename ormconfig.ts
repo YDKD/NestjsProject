@@ -13,6 +13,5 @@ let obj = {
 if (process.env.NODE_ENV == 'development') {
     obj.host = process.env.DB_LOCAL_HOST
 }
-console.log(obj)
 module.exports = obj
 
