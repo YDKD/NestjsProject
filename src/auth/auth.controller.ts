@@ -52,13 +52,7 @@ var jsexecpy = require("jsexecpy")
 
     }
 })
-// @CrudAuth({
-//     property: 'user',
-//     filter: (user: User) => ({
-//         id: user.id,
-//         isActive: true,
-//     })
-// })
+
 export class AuthController implements CrudController<User>{
     constructor(public service: AuthService,
         private jwtService: JwtService,
