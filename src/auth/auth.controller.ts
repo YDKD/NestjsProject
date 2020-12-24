@@ -76,8 +76,8 @@ export class AuthController implements CrudController<User>{
 
     }
 
-    @Post('diy/user')
-    insertUser(@Body() userData: UserDto) {
-        return this.authService.redirect(userData)
-    }
+    // @Post('diy/user')
+    // insertUser(@Body() userData: UserDto) {
+    //     return this.authService.redirect(userData)
+    // }
 }
