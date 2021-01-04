@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 
 
@@ -15,16 +15,14 @@ export class AuthController {
     @UseGuards(AuthGuard('local'))
     @Post('/login')
     async login(@Body() body) {
-        let result = await this.authService.validateUser(body.username, body.password)
-        if (result) {
-            return '登录成功'
-        } else {
-            throw new BadRequestException('登录失败')
-        }
+        return await this.authService.login(body.username, body.password)
+
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Post('/encrypt')
+    @ApiBearerAuth()
     async encrypt(@Body() body) {
-        return this.authService.encrypt(body.password)
+        return 111
     }
 }
