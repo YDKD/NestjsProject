@@ -10,7 +10,7 @@ export class UserEntity {
   user_id: number;
 
   @Column({ type: 'varchar', comment: '用户账号' })
-  account_name: string;
+  username: string;
 
   @Column({ type: 'varchar', comment: '真实姓名' })
   real_name: string;

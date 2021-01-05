@@ -20,9 +20,9 @@ export class AuthController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Post('/encrypt')
+    @Get('/encrypt/:password')
     @ApiBearerAuth()
-    async encrypt(@Body() body) {
-        return 111
+    async encrypt(@Param('password') password) {
+        return this.authService.encrypt(password)
     }
 }
