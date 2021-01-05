@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-12-29 13:38:24
+ * @LastEditTime: 2021-01-05 15:56:53
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \NestjsProject\src\utils\cryptogram.ts
+ */
 import * as crypto from 'crypto';
 
 /**
@@ -7,7 +15,7 @@ export function makeSalt(): string {
   return crypto.randomBytes(3).toString('base64');
 }
 
-/**
+/** 
  * Encrypt password
  * @param password 密码
  * @param salt 密码盐

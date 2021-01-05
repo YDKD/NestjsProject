@@ -11,7 +11,8 @@ import { UserModule } from './user/user.module';
   imports: [
     TypeOrmModule.forRoot(),
     UserModule,
-    AuthModule
+    AuthModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],
