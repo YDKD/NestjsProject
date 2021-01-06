@@ -10,6 +10,8 @@ export class AuthService {
         private readonly jwtService: JwtService
     ) { }
 
+    public access_token: string
+    public exp: number
     /**
      * @name: 
      * @param {string} password
@@ -45,14 +47,22 @@ export class AuthService {
      */
     async login(username, password) {
         const payload = { sub: username, password: password }
+        let access_token = this.jwtService.sign(payload)
+        let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
+        this.access_token = access_token
+        this.exp = exptime
         return {
-            access_token: this.jwtService.sign(payload),
-            exp: this.jwtService.verify(this.jwtService.sign(payload)).exp * 10000
+            access_token: access_token,
+            exp: exptime
         }
     }
 
     async register(username, password, email) {
         return await this.userService
+    }
+
+    async decode(token) {
+        return await this.jwtService.decode(token, { complete: true, json: true })
     }
 
 }

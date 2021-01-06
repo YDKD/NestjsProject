@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:46:53
- * @LastEditTime: 2021-01-05 17:50:08
+ * @LastEditTime: 2021-01-06 12:40:43
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\user\user.controller.ts
@@ -12,9 +12,11 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { query } from 'express';
 import { UserEntity } from 'src/entities/user.entity';
+import { emailDto } from './dto/email.dto';
 
 import { findOne } from './dto/find.dto';
 import { registerUserDto } from './dto/register.dto';
+import { usernamDto } from './dto/username.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -50,10 +52,10 @@ export class UserController {
         }
     }
 
-    @Get('/user_exist')
+    @Get('/user_exist/:username')
     @ApiOperation({ summary: '验证用户名是否已被注册' })
-    async usernameExist(@Query() query) {
-        const result = await this.userService.usernameExist(query.username)
+    async usernameExist(@Param() params: usernamDto) {
+        const result = await this.userService.usernameExist(params.username)
         if (result) {
             return {
                 status: 201,
@@ -66,9 +68,9 @@ export class UserController {
         }
     }
 
-    @Get('/email/validate')
-    async emailValidate(@Query() query) {
-        let { status } = await this.userService.sendEmail(query.email)
+    @Post('/email/validate')
+    async emailValidate(@Body() body: emailDto) {
+        let { status } = await this.userService.sendEmail(body.email)
         return status
     }
 }

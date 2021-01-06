@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes } from 'crypto';
 import { UserEntity } from 'src/entities/user.entity';
@@ -14,10 +14,10 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
   ) {
-    const code = ''
   }
+  send_code: string
 
 
   /**
@@ -61,18 +61,23 @@ export class UserService {
    * @return {*}
    */
   async createUser(username, password, email, postCode) {
-    const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'], where: { user_status: 1, role: 3 } })
-    let currLastUser = jsonParse(res)
-    let currUserId = currLastUser[currLastUser.length - 1].user_id + 1
-    let salt = currLastUser[currLastUser.length - 1].passwd_salt
-    let hashPassword = encryptPassword(password, salt)
-    const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}')`)
-    return result
+    if (postCode != this.send_code) {
+      throw new BadRequestException('验证码错误')
+    } else {
+      const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'], where: { user_status: 1, role: 3 } })
+      let currLastUser = jsonParse(res)
+      let currUserId = currLastUser[currLastUser.length - 1].user_id + 1
+      let salt = currLastUser[currLastUser.length - 1].passwd_salt
+      let hashPassword = encryptPassword(password, salt)
+      const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}')`)
+      return result
+    }
   }
 
   async sendEmail(addressee) {
     let sendCode = verifyCode()
-    
+    this.send_code = sendCode
+    console.log(this.send_code)
     return this.mailerService.sendMail({
       to: addressee,
       subject: "Foss-Store注册校验码",

@@ -1,12 +1,22 @@
+/*
+ * @Author: your name
+ * @Date: 2020-12-29 12:07:14
+ * @LastEditTime: 2021-01-06 14:59:01
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \NestjsProject\src\main.ts
+ */
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
+import { InitMiddleware } from './middleware/init.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // app.use(InitMiddleware)
   // 允许跨域
   app.enableCors()
   // 静态文件托管
