@@ -40,6 +40,7 @@
     "cross-env": "^7.0.3",
     "jsexecpy": "^1.1.0",
     "mysql": "^2.18.1",
+    "nestjs-redis": "^1.2.8",
     "nestjs-typegoose": "^7.1.38",
     "nodemailer": "^6.4.17",
     "passport": "^0.4.1",
@@ -48,6 +49,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
+    "semver": "^7.3.4",
     "swagger-ui-express": "^4.1.5",
     "typeorm": "^0.2.29"
   },

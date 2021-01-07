@@ -62,7 +62,10 @@ export class UserService {
    */
   async createUser(username, password, email, postCode) {
     if (postCode != this.send_code) {
-      throw new BadRequestException('验证码错误')
+      return {
+        code: 201,
+        msg: '验证码错误'
+      }
     } else {
       const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'], where: { user_status: 1, role: 3 } })
       let currLastUser = jsonParse(res)
