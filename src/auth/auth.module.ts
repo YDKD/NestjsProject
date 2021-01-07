@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:56:12
- * @LastEditTime: 2021-01-06 17:41:33
+ * @LastEditTime: 2021-01-07 16:30:07
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\auth\auth.module.ts
@@ -9,6 +9,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { CommonService } from 'src/common/common.service';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -21,12 +22,12 @@ import { LocalStrategy } from './local.strategy';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: {
-        expiresIn: '60s'
+        expiresIn: '2 days'
       }
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, CommonService],
   exports: [AuthService]
 })
 export class AuthModule { }

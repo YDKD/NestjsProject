@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CommonService } from 'src/common/common.service';
 import { UserService } from 'src/user/user.service';
 import { encryptPassword } from 'src/utils/cryptogram';
 
@@ -7,7 +8,8 @@ import { encryptPassword } from 'src/utils/cryptogram';
 export class AuthService {
     constructor(
         private readonly userService: UserService,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly commonService: CommonService
     ) { }
 
     public access_token: string
@@ -48,6 +50,8 @@ export class AuthService {
     async login(username, password) {
         const payload = { sub: username, password: password }
         let access_token = this.jwtService.sign(payload)
+        // redis 存储token
+        this.commonService.set(username, access_token)
         let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
         this.access_token = access_token
         this.exp = exptime
@@ -57,12 +61,9 @@ export class AuthService {
         }
     }
 
-    async register(username, password, email) {
-        return await this.userService
-    }
-
     async decode(token) {
         return await this.jwtService.decode(token, { complete: true, json: true })
+
     }
 
 }
