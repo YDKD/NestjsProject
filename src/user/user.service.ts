@@ -72,7 +72,7 @@ export class UserService {
       const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}')`)
       return result
     }
-  }
+  }   
 
   async sendEmail(addressee) {
     let sendCode = verifyCode()
