@@ -66,4 +66,8 @@ export class AuthService {
 
     }
 
+    decrypt(data) {
+        this.commonService.decrypt(data)
+    }
+
 }

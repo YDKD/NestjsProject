@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-04 11:46:58
+ * @LastEditTime: 2021-01-08 16:00:48
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \NestjsProject\src\user\user.service.ts
+ */
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,6 +50,11 @@ export class UserService {
     return result ? true : false;
   }
 
+  async emailExist(email) {
+    const result = await this.userRepository.findOne({ email })
+    return result ? true : false;
+  }
+
   /**
    * @name: 根据用户ID查询用户信息
    * @param {*} user_id
@@ -61,12 +74,7 @@ export class UserService {
    * @return {*}
    */
   async createUser(username, password, email, postCode) {
-    if (postCode != this.send_code) {
-      return {
-        code: 201,
-        msg: '验证码错误'
-      }
-    } else {
+    if (postCode == this.send_code) {
       const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'], where: { user_status: 1, role: 3 } })
       let currLastUser = jsonParse(res)
       let currUserId = currLastUser[currLastUser.length - 1].user_id + 1
@@ -74,8 +82,13 @@ export class UserService {
       let hashPassword = encryptPassword(password, salt)
       const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}')`)
       return result
+    } else {
+      return {
+        code: 201,
+        msg: '验证码错误'
+      }
     }
-  }   
+  }
 
   async sendEmail(addressee) {
     let sendCode = verifyCode()
@@ -86,14 +99,9 @@ export class UserService {
       subject: "Foss-Store注册校验码",
       html: `<h1>欢迎注册Foss-Store系统，您本次的注册验证码为：${sendCode}</h1>`,
     }).then((res) => {
-      return {
-        sendCode: sendCode,
-        status: 200
-      }
+      return 200
     }).catch((error) => {
-      return {
-        status: 201
-      }
+      return 201
     })
   }
 }

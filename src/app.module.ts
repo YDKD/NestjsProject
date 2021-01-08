@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-12-29 12:07:14
- * @LastEditTime: 2021-01-07 16:15:41
+ * @LastEditTime: 2021-01-08 16:33:59
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\app.module.ts
@@ -37,7 +37,11 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(InitMiddleware)
-      .exclude('auth/(.*)')
+      .exclude({ path: 'auth/(.*)', method: RequestMethod.ALL },
+        { path: 'user/user_exist/(.*)', method: RequestMethod.ALL },
+        { path: 'user/create', method: RequestMethod.POST },
+        { path: 'user/email/(.*)', method: RequestMethod.ALL },
+      )
       .forRoutes({ path: '*', method: RequestMethod.ALL })
   }
 }

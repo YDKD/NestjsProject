@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-12-29 12:07:14
- * @LastEditTime: 2021-01-06 14:59:01
+ * @LastEditTime: 2021-01-08 11:36:14
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\main.ts
@@ -16,9 +16,8 @@ import { InitMiddleware } from './middleware/init.middleware';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // app.use(InitMiddleware)
   // 允许跨域
-  app.enableCors()
+  // app.enableCors()
   // 静态文件托管
   // 错误返回
   app.useGlobalFilters(new HttpExceptionFilter())

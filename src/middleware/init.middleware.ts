@@ -11,7 +11,7 @@ export class InitMiddleware implements NestMiddleware {
     private readonly commonService: CommonService
   ) { }
   async use(req: any, res: any, next: () => void) {
-    console.log(semver.satisfies('3.1.1', '2 >=2.2.1 || 3.x || 4 || 5'))
+    console.log(123)
     // 未登录、请求头未携带token、token过期
     if (this.authService.access_token && req.headers.authorization && this.authService.exp > new Date().getTime()) {
       // 获取用户上传token
