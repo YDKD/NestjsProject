@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-12-29 12:07:14
- * @LastEditTime: 2021-01-08 16:33:59
+ * @LastEditTime: 2021-01-09 14:47:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\app.module.ts
@@ -41,6 +41,7 @@ export class AppModule implements NestModule {
         { path: 'user/user_exist/(.*)', method: RequestMethod.ALL },
         { path: 'user/create', method: RequestMethod.POST },
         { path: 'user/email/(.*)', method: RequestMethod.ALL },
+        { path: 'user/reset-password', method: RequestMethod.ALL },
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL })
   }

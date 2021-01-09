@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:46:53
- * @LastEditTime: 2021-01-08 16:31:58
+ * @LastEditTime: 2021-01-09 15:33:36
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\user\user.controller.ts
@@ -36,20 +36,29 @@ export class UserController {
 
 
     @Post('/create')
+    @HttpCode(200)
     @ApiOperation({ summary: '创建用户' })
     async createUser(@Body() body: registerUserDto) {
-        let result = await this.userService.createUser(body.username, body.password, body.email, body.verifyCode)
-        if (result.affectedRows > 0) {
+        let { code, data } = await this.userService.createUser(body.data)
+        if (code === 201) {
             return {
-                status: 200,
-                msg: '创建成功'
+                status: 202,
+                msg: '验证码错误'
             }
         } else {
-            return {
-                status: 201,
-                msg: '创建失败'
+            if (data.affectedRows > 0) {
+                return {
+                    status: 200,
+                    msg: '创建成功'
+                }
+            } else {
+                return {
+                    status: 201,
+                    msg: '创建失败'
+                }
             }
         }
+
     }
 
     @Get('/user_exist/:username')
@@ -69,13 +78,12 @@ export class UserController {
     }
 
     @Get('/email/exist/:email')
-    @ApiOperation({ summary: '验证用户名是否已被注册' })
+    @ApiOperation({ summary: '验证邮箱是否已被注册' })
     async emailExist(@Param() params: emailDto) {
         const result = await this.userService.emailExist(params.email)
         if (result) {
             return {
                 status: 201,
-                msg: '该邮箱已被注册'
             }
         } else {
             return {
@@ -86,6 +94,7 @@ export class UserController {
 
     @Post('/email/code')
     @HttpCode(200)
+    @ApiOperation({ summary: '发送邮箱验证码' })
     async emailValidate(@Body() body: emailDto) {
         let res = await this.userService.sendEmail(body.email)
         if (res === 200) {
@@ -99,5 +108,31 @@ export class UserController {
                 msg: '验证码发送成功'
             }
         }
+    }
+
+    @Post('/reset-password')
+    @HttpCode(200)
+    @ApiOperation({ summary: '重置密码' })
+    async resetPassword(@Body() body: registerUserDto) {
+        let { code, data } = await this.userService.resetPassword(body.data)
+        if (code === 201) {
+            return {
+                status: 202,
+                msg: '验证码错误'
+            }
+        } else {
+            if (data.affectedRows > 0) {
+                return {
+                    status: 200,
+                    msg: '密码重置成功'
+                }
+            } else {
+                return {
+                    status: 201,
+                    msg: '密码重置失败'
+                }
+            }
+        }
+
     }
 }

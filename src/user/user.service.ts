@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:46:58
- * @LastEditTime: 2021-01-08 16:00:48
+ * @LastEditTime: 2021-01-09 15:36:24
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\user\user.service.ts
@@ -16,6 +16,7 @@ import { encryptPassword } from 'src/utils/cryptogram';
 import { jsonParse } from 'src/utils/json';
 import { Repository } from 'typeorm';
 import { codeOverdue } from 'src/utils';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,7 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly mailerService: MailerService,
+    private readonly commonService: CommonService
   ) {
   }
   send_code: string
@@ -73,23 +75,40 @@ export class UserService {
    * @param {*} email
    * @return {*}
    */
-  async createUser(username, password, email, postCode) {
-    if (postCode == this.send_code) {
-      const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'], where: { user_status: 1, role: 3 } })
+  async createUser(data) {
+    // 解密
+    let { postCode, username, password, email } = await this.commonService.decrypt(data)
+    let currUserId: number
+    let salt = ''
+    if (postCode.toLocaleLowerCase() == this.send_code.toLocaleLowerCase()) {
+      const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'], where: { user_status: 1 } })
       let currLastUser = jsonParse(res)
-      let currUserId = currLastUser[currLastUser.length - 1].user_id + 1
-      let salt = currLastUser[currLastUser.length - 1].passwd_salt
+      if (currLastUser) {
+        currUserId = currLastUser[currLastUser.length - 1].user_id + 1
+        salt = currLastUser[currLastUser.length - 1].passwd_salt
+      } else {
+        currUserId = 67100
+        salt = 'dasd'
+      }
+
       let hashPassword = encryptPassword(password, salt)
       const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}')`)
-      return result
+      return {
+        code: 200,
+        data: result
+      }
     } else {
       return {
-        code: 201,
-        msg: '验证码错误'
+        code: 201
       }
     }
   }
 
+  /**
+   * @name: 发送邮箱验证码
+   * @param {*} addressee
+   * @return {*}
+   */
   async sendEmail(addressee) {
     let sendCode = verifyCode()
     this.send_code = sendCode
@@ -103,5 +122,27 @@ export class UserService {
     }).catch((error) => {
       return 201
     })
+  }
+
+
+  async resetPassword(data) {
+    // 解密
+    let { postCode, password, email } = await this.commonService.decrypt(data)
+    if (postCode.toLocaleLowerCase() == this.send_code.toLocaleLowerCase()) {
+      // 获取用户
+      let userInfo = await this.userRepository.find({ where: { email: email } })
+      userInfo = jsonParse(userInfo)
+      let newPassword = encryptPassword(password, userInfo[0].passwd_salt)
+      let res = await this.userRepository.query(`UPDATE user_entity SET password = '${newPassword}' WHERE email = '${userInfo[0].email}'`)
+      return {
+        code: 200,
+        data: res
+      }
+    } else {
+      return {
+        code: 201
+      }
+    }
+
   }
 }

@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-04 11:56:27
+ * @LastEditTime: 2021-01-09 11:51:45
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \NestjsProject\src\auth\auth.service.ts
+ */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
@@ -67,7 +75,7 @@ export class AuthService {
     }
 
     decrypt(data) {
-        this.commonService.decrypt(data)
+        return this.commonService.decrypt(data)
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:46:45
- * @LastEditTime: 2021-01-05 17:12:14
+ * @LastEditTime: 2021-01-09 11:52:45
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\user\user.module.ts
@@ -12,6 +12,7 @@ import { UserEntity } from 'src/entities/user.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MailerModule } from '@nestjs-modules/mailer'
+import { CommonService } from 'src/common/common.service';
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity]),
   MailerModule.forRoot({
@@ -29,7 +30,7 @@ import { MailerModule } from '@nestjs-modules/mailer'
     }
   })],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, CommonService],
   exports: [UserService]
 })
 export class UserModule { }
