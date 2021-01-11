@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:46:58
- * @LastEditTime: 2021-01-09 17:40:26
+ * @LastEditTime: 2021-01-11 14:29:28
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\user\user.service.ts
@@ -141,8 +141,8 @@ export class UserService {
     } else {
       return {
         code: 201
-      } 
-   }
+      }
+    }
 
   }
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: YDKD
  * @Date: 2021-01-04 11:56:20
- * @LastEditTime: 2021-01-09 13:51:26
+ * @LastEditTime: 2021-01-11 11:13:58
  * @LastEditors: Please set LastEditors
  * @Description: Auth Controller
  * @FilePath: \NestjsProject\src\auth\auth.controller.ts
@@ -43,5 +43,11 @@ export class AuthController {
     @Post('/decrypt')
     async decryptData(@Body() body) {
         this.authService.decrypt(body.data)
+    }
+
+
+    @Post('/encrypt')
+    async encryptData(@Body() body) {
+       return await  this.authService.encryptData(body.data)
     }
 }

@@ -1,13 +1,14 @@
 /*
  * @Author: your name
  * @Date: 2021-01-07 18:08:51
- * @LastEditTime: 2021-01-09 11:46:46
+ * @LastEditTime: 2021-01-11 12:32:23
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\common\common.service.ts
  */
 import { Injectable } from '@nestjs/common';
 import { RedisService } from 'nestjs-redis';
+// 私钥解密
 var NodeRSA = require('node-rsa')
 const privatekey = `-----BEGIN PRIVATE KEY-----
 MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALciejdMq0x7ZR9h
@@ -29,6 +30,17 @@ const key = new NodeRSA();
 key.setOptions({ encryptionScheme: 'pkcs1' })
 key.importKey(privatekey, 'pkcs8')
 
+// 公钥加密
+var NodeRSA1 = require('node-rsa')
+const publicKey = `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6NbLptKyVTTGvIFm7MSFN5k4Z
+EaTwvfxIGLrs0Sy40wXdY+55M4Y1Jbs/F70yLShjYee9u41OmFidA+E0QoMQBbco
+dm4+iUV/WsVw/sGAmTAdRY9oYm5abaKrUST90j/S0+QUOVDMSvxubIHtY66KW5sV
+M+nYhkQUjuBHdV97uwIDAQAB
+-----END PUBLIC KEY-----`
+const key1 = new NodeRSA1(publicKey);
+key1.setOptions({ encryptionScheme: 'pkcs1' })
+// key1.importKey(publicKey, 'pkcs8')
 @Injectable()
 export class CommonService {
     public client;
@@ -74,6 +86,11 @@ export class CommonService {
         })
         let userDetail = JSON.parse(BaseStr) //解析成js对象
         return userDetail
+    }
+
+    // 加密
+    async encrypt(data) {
+        return await key1.encrypt(data, 'base64')
     }
 
 }

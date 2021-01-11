@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:56:27
- * @LastEditTime: 2021-01-09 11:51:45
+ * @LastEditTime: 2021-01-11 14:22:55
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\auth\auth.service.ts
@@ -58,13 +58,23 @@ export class AuthService {
     async login(username, password) {
         const payload = { sub: username, password: password }
         let access_token = this.jwtService.sign(payload)
+        let res = await this.userService.findOneByName(username)
+        let userInfo = {
+            user_id: res.user_id,
+            username: res.username,
+            email: res.email,
+            role: res.role,
+        }
+        let userInfoStringfy = JSON.stringify(userInfo)
+        // 返回 token
+        let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy)
         // redis 存储token
         this.commonService.set(username, access_token)
         let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
         this.access_token = access_token
         this.exp = exptime
         return {
-            access_token: access_token,
+            access_token: return_token,
             exp: exptime
         }
     }
@@ -76,6 +86,10 @@ export class AuthService {
 
     decrypt(data) {
         return this.commonService.decrypt(data)
+    }
+
+    async encryptData(data) {
+        return await this.commonService.encrypt(data)
     }
 
 }
