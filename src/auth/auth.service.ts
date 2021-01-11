@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:56:27
- * @LastEditTime: 2021-01-11 14:22:55
+ * @LastEditTime: 2021-01-11 15:13:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\auth\auth.service.ts
@@ -79,15 +79,26 @@ export class AuthService {
         }
     }
 
+    /**
+     * @name: 退出登录
+     * @param username
+    */
+    async logout(username) {
+        let res = await this.commonService.set(username, '')
+        return res
+    }
+
+    // 解access_token
     async decode(token) {
         return await this.jwtService.decode(token, { complete: true, json: true })
 
     }
-
+    // 解密上传数据
     decrypt(data) {
         return this.commonService.decrypt(data)
     }
 
+    // 加密返回数据
     async encryptData(data) {
         return await this.commonService.encrypt(data)
     }

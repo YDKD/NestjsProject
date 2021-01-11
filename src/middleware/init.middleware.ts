@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-06 14:41:50
+ * @LastEditTime: 2021-01-11 15:03:05
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \NestjsProject\src\middleware\init.middleware.ts
+ */
 import { BadRequestException, HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { NOTFOUND } from 'dns';
@@ -15,18 +23,19 @@ export class InitMiddleware implements NestMiddleware {
     // 未登录、请求头未携带token、token过期
     if (this.authService.access_token && req.headers.authorization && this.authService.exp > new Date().getTime()) {
       // 获取用户上传token
-      let postToken = req.headers.authorization.split(' ')[1]
+      let postToken = req.headers.authorization
       // 解析token
       let decode: any = await this.authService.decode(postToken)
       // 获取token中的sub用户名
       let username = decode.payload.sub
       // 根据上传用户名在Redis进行查询
-      let result: any = await this.commonService.get('zs').then(res => {
+      let result: any = await this.commonService.get(username).then(res => {
         return res
       })
       if (result) {
         next()
       } else {
+        console.log(333)
         throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED)
       }
     } else {
