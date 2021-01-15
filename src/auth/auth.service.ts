@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:56:27
- * @LastEditTime: 2021-01-11 15:13:00
+ * @LastEditTime: 2021-01-15 16:59:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\auth\auth.service.ts
@@ -11,7 +11,9 @@ import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
 import { UserService } from 'src/user/user.service';
 import { encryptPassword } from 'src/utils/cryptogram';
-
+import dayjs = require('dayjs');
+var fs = require('fs');
+var compressing = require("compressing");
 @Injectable()
 export class AuthService {
     constructor(
@@ -103,4 +105,26 @@ export class AuthService {
         return await this.commonService.encrypt(data)
     }
 
+
+    // 上传文件
+    async uploadFile(file) {
+        console.log(file['originalname'])
+        let dir = `./upload/${dayjs().format('YYYY-MM-DD')}/${file['originalname']}`
+        // var extract = unzip.Extract({ path: '/demo.zip' });
+        // extract.on('finish', function () {
+        //     console.log("解压完成!!");
+        // });
+        // extract.on('error', function (err) {
+        //     console.log(err);
+        // });
+        // fs.createReadStream('./demo', {flags: 'r'}).pipe(extract);
+
+        await compressing.zip.uncompress(dir, "./decompression")
+            .then(() => {
+                console.log('unzip', 'success');
+            })
+            .catch(err => {
+                console.error('unzip', err);
+            });
+    }
 }

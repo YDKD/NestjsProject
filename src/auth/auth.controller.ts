@@ -1,14 +1,15 @@
 /*
  * @Author: YDKD
  * @Date: 2021-01-04 11:56:20
- * @LastEditTime: 2021-01-12 14:56:34
+ * @LastEditTime: 2021-01-15 15:10:51
  * @LastEditors: Please set LastEditors
  * @Description: Auth Controller
  * @FilePath: \NestjsProject\src\auth\auth.controller.ts
  */
-import { BadRequestException, Body, Controller, Get, Param, Post, UseFilters, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { AuthService } from './auth.service';
@@ -63,6 +64,22 @@ export class AuthController {
         jsexecpy.runpath_with_params('C:/Users/12996/Desktop/FossStoreApi/project/NestjsProject/src/auth/main.py', params, async ({ data, pythonpath }) => {
             return await data
         })
+
+    }
+
+    @Post('/upload')
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'file', maxCount: 1 }
+    ]))
+    async upload(@UploadedFiles() files) {
+        if (JSON.stringify(files) == '{}') {
+            return {
+                code: 201,
+                msg: '上传文件为空'
+            }
+        } else {
+            return await this.authService.uploadFile(files['file'][0])
+        }
 
     }
 }
