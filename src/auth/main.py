@@ -6,9 +6,13 @@ import time
 import random
 import csv
 import pymysql
-
+import sys
 # 此处写入登录之后自己的cookies
-cookie = 't=27377e49b6dc6d97862190b819d64a1b; thw=cn; hng=CN%7Czh-CN%7CCNY%7C156; UM_distinctid=17608d0232211-046aa9e2260e14-594a2011-1fa400-17608d023233cd; enc=j7wSnJP7%2FGRHv5DTxpE%2B%2F1BG8eS0wZaxDK0ClqYMnMHto7FEWrwtVcJEVnEQNIgT6vLW4tDza6R0HdlyIbWbGUY%2BkEJaDHZTNL0BXIN%2B10U%3D; CNZZDATA1256793290=2067580604-1606462742-https%253A%252F%252Fwww.taobao.com%252F%7C1607137805; _fbp=fb.1.1607138044979.883418036; cna=DT+MF+4LTk4CAbaWLCkwz3+f; lgc=boby%5Cu946B%5Cu604B; tracknick=boby%5Cu946B%5Cu604B; sgcookie=E100Ay721nG%2FX9%2FpuY0jh7gBUItZSErBc6Sebs3DfHkgDx4NKUPJbPKmOd%2BVu%2B0g05nfALcgEKAx11nqPgfE3rVDPQ%3D%3D; uc3=nk2=AQuBosO4j8I%3D&id2=UUkJZW6fmmVL2w%3D%3D&vt3=F8dCuf2ADm6JzauK9P4%3D&lg2=VFC%2FuZ9ayeYq2g%3D%3D; uc4=id4=0%40U2uFU3CL5gIO6gpSGtBWXEAnHxgI&nk4=0%40A6ZBXnpzS01uTaZcVlTt6fHAeg%3D%3D; _cc_=URm48syIZQ%3D%3D; mt=ci=30_1; v=0; _m_h5_tk=dad1d52a667c0e67cb10b127dd14ca99_1607320997026; _m_h5_tk_enc=857115c14c647d675077f4cd21da7a0f; uc1=cookie14=Uoe0altPM%2FIQjw%3D%3D; _tb_token_=e7418e3373ebe; xlly_s=1; tfstk=cwyCBpqLmeYBsU5yLksZ4eeTIlkFZyKjV6g3AWxH3YevQjECicpqlc-3ZUptMc1..; l=eBPBH1F7Ok6ok9yBBOfZourza77TxIRfguPzaNbMiOCPO4fk5mlAWZRQvMTDCnGVnsxyu3JZQomQBYLiyyUIh2nk8bl2cMptndLh.; isg=BH5-kLVjreSl0_nGDyNI06bTz5TAv0I5c0OmFyiHdEG8yx-lgEz5SXbpQ5cHczpR'
+cookie = '_uab_collina=161044538781433464813309; alitrackid=login.taobao.com; lastalitrackid=login.taobao.com; x5sec=7b2274616f62616f2d73686f707365617263683b32223a223763653962343535346534313135633835636438613536663438383864363162434b6e532f763846454d6d576f35717039634f4a4e526f4d4d6a45334d7a6b784f4463324f44737a227d; _samesite_flag_=true; cookie2=1f65ca4d1b132889b87e8de0c2600198; t=18672998b70005b7b03f4d84dbf0a119; _tb_token_=345b3574eda08; sgcookie=E100QrDoY7ocMfRjJ%2FJS6RvOtV3lboD2il8Hb4Bhi5l8sV1yJb0O6JYuY8Xyfg17I1Ehn4apYgbLnViYfa7CmAWGlw%3D%3D; unb=2173918768; uc3=vt3=F8dCuAFcT0%2F8cvbhaPo%3D&lg2=V32FPkk%2Fw0dUvg%3D%3D&nk2=AQuBosO4j8I%3D&id2=UUkJZW6fmmVL2w%3D%3D; csg=9aeb26fc; lgc=boby%5Cu946B%5Cu604B; cookie17=UUkJZW6fmmVL2w%3D%3D; dnk=boby%5Cu946B%5Cu604B; skt=5978da0e0e40f611; existShop=MTYxMDU5MDU1MA%3D%3D; uc4=id4=0%40U2uFU3CL5gIO6gpSGtHBzx0T8Vmz&nk4=0%40A6ZBXnpzS01uTaZdt%2FCv5kY6xw%3D%3D; tracknick=boby%5Cu946B%5Cu604B; _cc_=Vq8l%2BKCLiw%3D%3D; _l_g_=Ug%3D%3D; sg=%E6%81%8B8a; _nk_=boby%5Cu946B%5Cu604B; cookie1=BvbYhTgJoagfvi2OFmKW4yeymDlsss71fxOW5fJpOnY%3D; enc=TNsLXfmbCD6pu8OFqcjFb6NyvTotEnxoC8z7WKF9G8UL0LmoRqQuz9a%2FTt%2BlQG32%2BMpd2oUP%2Bc6jndccq7jmGg%3D%3D; mt=ci=34_1; uc1=cookie21=VFC%2FuZ9aiKCaj7AzMHh1&cookie14=Uoe1gq3dnbvBqg%3D%3D&cookie16=UIHiLt3xCS3yM2h4eKHS9lpEOw%3D%3D&existShop=false&pas=0&cookie15=U%2BGCWk%2F75gdr5Q%3D%3D; thw=cn; cna=DT+MF+4LTk4CAbaWLCkwz3+f; xlly_s=1; JSESSIONID=6BF090F523CF854D2E943C636C667576; isg=BO7uNFh0PSZeyUl2H_PYA5aDP0Sw77LpVEMTHxi3Q_Gs-45VgH-Y-ADxs2cXI6oB; tfstk=cB6lBOw01_RWnaRc1895jmH4SJNAZvPyP9WV3tg_1bWccgWVi6hq_7i8mUQlpX1..; l=eBPBH1F7Ok6okvQbBOfZnurza77T_IRAguPzaNbMiOCP9wfp5GelWZ83FuY9CnGVh646R3-Id_-7BeYBqhYan5U68yvNIskmn'
+# 搜索的商品名称
+search_goods_name = 'macbook' 
+# 保存的商品名称
+save_goods_name = 'macbook' 
 # 获取页面信息
 
 
@@ -119,7 +123,6 @@ def parsePage(html):
         print('有数据信息不全，如某一页面中某一商品缺少地区信息')
 
 
-
 # 连接数据库
 def connect_mysql(file_name, listData):
     # 连接MySQL数据库（注意：charset参数是utf8而不是utf-8）
@@ -141,9 +144,9 @@ def connect_mysql(file_name, listData):
     for each in list(listData):
         i = tuple(each[:])
         # 使用SQL语句添加数据
-        sql = 'INSERT INTO ' + file_name + ' VALUES' + str(
-            i)  # db_top100是表的名称
+        sql = 'INSERT INTO ' + file_name + ' VALUES' + str(i)  # db_top100是表的名称
         cursor.execute(sql)  # 执行SQL语句
+        print('数据写入中')
     try:
         conn.commit()  # 提交数据
         cursor.close()  # 关闭游标
@@ -154,17 +157,17 @@ def connect_mysql(file_name, listData):
 
 
 def main():
-    goods = 'iphonex' # 输入想搜索的商品名称
-    file_name = 'iphonex'  # 输入想保存的商品名称
+    goods = search_goods_name  # 输入想搜索的商品名称
+    file_name = save_goods_name  # 输入想保存的商品名称
     depth = 5  # 爬取的页数
-    start_url = 'http://s.taobao.com/search?q=' + goods  # 初始搜索地址
+    start_url = 'https://s.taobao.com/search?q=' + goods  # 初始搜索地址
     for i in range(depth):
         time.sleep(random.randint(10, 15))
         try:
             page = i + 1
             print('正在爬取第%s页数据' % page)
             url = start_url + \
-                '&imgfile=&js=1&stats_click=search_radio_all%3A1&initiative_id=staobaoz_20201128&ie=utf8&style=grid&sort=sale-desc&bcoffset=0&p4ppushleft=%2C44&s=' + \
+                '&imgfile=&js=1&stats_click=search_radio_all%3A1&initiative_id=staobaoz_20210112&ie=utf8&style=grid&sort=sale-desc&bcoffset=0&p4ppushleft=%2C44&s=' + \
                 str(44 * i)
 
             html = getHTMLText(url)
