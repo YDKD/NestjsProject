@@ -34,6 +34,7 @@
     "@nestjsx/crud-typeorm": "^4.6.2",
     "@typegoose/typegoose": "^7.4.5",
     "@types/bcryptjs": "^2.4.2",
+    "@types/xlsx": "^0.0.36",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
@@ -54,7 +55,8 @@
     "rxjs": "^6.6.3",
     "semver": "^7.3.4",
     "swagger-ui-express": "^4.1.5",
-    "typeorm": "^0.2.29"
+    "typeorm": "^0.2.29",
+    "xlsx": "^0.16.9"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",
@@ -67,6 +69,7 @@
     "@types/node": "^14.14.21",
     "@types/passport-jwt": "^3.0.3",
     "@types/supertest": "^2.0.10",
+    "@types/xlsx": "^0.0.36",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
     "compressing": "^1.5.1",
@@ -84,7 +87,8 @@
     "ts-loader": "^8.0.8",
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "xlsx": "^0.16.9"
   },
   "jest": {
     "moduleFileExtensions": [

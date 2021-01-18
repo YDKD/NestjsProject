@@ -1,7 +1,7 @@
 /*
  * @Author: YDKD
  * @Date: 2021-01-04 11:56:20
- * @LastEditTime: 2021-01-15 15:10:51
+ * @LastEditTime: 2021-01-18 11:54:46
  * @LastEditors: Please set LastEditors
  * @Description: Auth Controller
  * @FilePath: \NestjsProject\src\auth\auth.controller.ts
@@ -78,7 +78,19 @@ export class AuthController {
                 msg: '上传文件为空'
             }
         } else {
-            return await this.authService.uploadFile(files['file'][0])
+            let res = await this.authService.uploadFile(files['file'][0])
+            if(res == 200) {
+                return {
+                    code: 200,
+                    msg: '上传成功'
+                }
+            } else {
+                return {
+                    code: 201,
+                    msg: res
+                }
+            }
+            console.log(res)
         }
 
     }

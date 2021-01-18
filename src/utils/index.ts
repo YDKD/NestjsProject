@@ -1,12 +1,19 @@
 /*
  * @Author: your name
  * @Date: 2021-01-05 17:24:39
- * @LastEditTime: 2021-01-05 17:34:27
+ * @LastEditTime: 2021-01-18 18:09:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\utils\index.ts
  */
+
+import { BadRequestException, HttpCode, HttpException, HttpStatus } from "@nestjs/common";
+
 //随机数
+var fs = require('fs')
+var path = require('path')
+var result = 300
+import { readFile, utils } from 'xlsx'
 function random(max, min) {
     return Math.round(Math.random() * (max - min) + min);
 }
@@ -34,4 +41,84 @@ export function codeOverdue(startime, stoptime) {
     } else {
         return true
     }
+}
+
+
+// 读取文件
+export function fileDisplay(filePath) {
+    let files = fs.readdirSync(filePath)
+    files.forEach((filename) => {
+        //获取当前文件的绝对路径  
+        var filedir = path.join(filePath, filename);
+        //根据文件路径获取文件信息，返回一个fs.Stats对象  
+        let stats = fs.statSync(filedir)
+        if (!stats) {
+            result = 201
+        } else {
+            var isFile = stats.isFile();//是文件  
+            var isDir = stats.isDirectory();//是文件夹  
+            if (isFile) {
+                let suffix = filedir.split('.')
+                let suffixArr = ['xls', 'xlsx', 'csv']
+                if (!suffixArr.includes(suffix[1])) {
+                    throw new HttpException('文件类型不符合', HttpStatus.NOT_FOUND)
+                } else {
+                    let workbook = readFile(filedir, { type: 'binary' })
+                    // console.log(workbook)
+                    const sheetNames = workbook.SheetNames; //获取表名
+                    const sheet = workbook.Sheets[sheetNames[0]]; //通过表名得到表对象
+                    const thead = [
+                        sheet.A1.v,
+                        sheet.B1.v,
+                        sheet.C1.v,
+                        sheet.D1.v,
+                        sheet.E1.v,
+                        sheet.F1.v,
+                        sheet.G1.v,
+                        sheet.H1.v,
+                        sheet.I1.v,
+                        sheet.J1.v,
+                        sheet.K1.v,
+                        sheet.L1.v,
+                        sheet.M1.v,
+                    ];
+                    const data = utils.sheet_to_json(sheet, { defval: '' }); //通过工具将表对象的数据读出来并转成json
+                    const theadRule = [
+                        'views_title',
+                        'commit_id',
+                        "img_pat",
+                        'views_price',
+                        'view_fee',
+                        'province',
+                        'city',
+                        'views_sales',
+                        'comment_count',
+                        'shop_name',
+                        'detail_url',
+                        'comment_url',
+                        'shop_link',
+                    ];
+                    console.log(thead)
+                    const isValid = thead.every((value, index) => value === theadRule[index]); //检验表字段
+                    if (!isValid) {
+                        console.log(444)
+                        result = 202
+
+                    } else {
+                        console.log(333)
+                    }
+                    // console.log(thead)
+                    
+                    // console.log(data)
+                }
+            }
+            if (isDir) {
+                fileDisplay(filedir);//递归，如果是文件夹，就继续遍历该文件夹下面的文件  
+            }
+        }
+    })
+}
+
+export {
+    result
 }

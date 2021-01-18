@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-01-04 11:56:27
- * @LastEditTime: 2021-01-15 16:59:06
+ * @LastEditTime: 2021-01-18 18:04:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \NestjsProject\src\auth\auth.service.ts
@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
 import { UserService } from 'src/user/user.service';
 import { encryptPassword } from 'src/utils/cryptogram';
+import { fileDisplay, result } from '../utils/index'
 import dayjs = require('dayjs');
 var fs = require('fs');
 var compressing = require("compressing");
@@ -108,23 +109,29 @@ export class AuthService {
 
     // 上传文件
     async uploadFile(file) {
-        console.log(file['originalname'])
         let dir = `./upload/${dayjs().format('YYYY-MM-DD')}/${file['originalname']}`
-        // var extract = unzip.Extract({ path: '/demo.zip' });
-        // extract.on('finish', function () {
-        //     console.log("解压完成!!");
-        // });
-        // extract.on('error', function (err) {
-        //     console.log(err);
-        // });
-        // fs.createReadStream('./demo', {flags: 'r'}).pipe(extract);
+        let uploadFileName = file['originalname'].split('.')
+        // 防止用户带日期或版本号上传
+        let setFileName = uploadFileName.slice(0, uploadFileName.length - 1).join('.')
+        return await compressing.zip.uncompress(dir, `./decompression/${dayjs().format('YYYY-MM-DD')}`)
+            .then(async () => {
+                let filePath = './decompression'
+                await fileDisplay(filePath)
+                if (result == 201) {
+                    return {
+                        code: 201,
+                        msg: '文件读取失败'
+                    }
+                } else if(result == 202) {
+                    return {
+                        code: 202,
+                        msg: 'Excel表格式不对'
+                    }
+                }
 
-        await compressing.zip.uncompress(dir, "./decompression")
-            .then(() => {
-                console.log('unzip', 'success');
             })
             .catch(err => {
-                console.error('unzip', err);
+                return err
             });
     }
 }
