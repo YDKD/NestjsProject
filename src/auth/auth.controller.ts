@@ -78,19 +78,11 @@ export class AuthController {
                 msg: '上传文件为空'
             }
         } else {
-            let res = await this.authService.uploadFile(files['file'][0])
-            if(res == 200) {
-                return {
-                    code: 200,
-                    msg: '上传成功'
-                }
-            } else {
-                return {
-                    code: 201,
-                    msg: res
-                }
+            let { code, msg } = await this.authService.uploadFile(files['file'][0])
+            return {
+                code,
+                msg
             }
-            console.log(res)
         }
 
     }

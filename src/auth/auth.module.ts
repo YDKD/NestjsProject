@@ -19,9 +19,14 @@ import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { diskStorage } from 'multer';
 import dayjs = require('dayjs');
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { iphone } from 'src/entities/phone.entity';
 
 @Module({
-  imports: [UserModule, PassportModule,
+  imports: [
+    TypeOrmModule.forFeature([iphone]),
+    UserModule, 
+    PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: {

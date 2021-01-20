@@ -13,6 +13,7 @@ import { BadRequestException, HttpCode, HttpException, HttpStatus } from "@nestj
 var fs = require('fs')
 var path = require('path')
 var result = 300
+var result_data:any
 import { readFile, utils } from 'xlsx'
 function random(max, min) {
     return Math.round(Math.random() * (max - min) + min);
@@ -98,18 +99,19 @@ export function fileDisplay(filePath) {
                         'comment_url',
                         'shop_link',
                     ];
-                    console.log(thead)
                     const isValid = thead.every((value, index) => value === theadRule[index]); //检验表字段
                     if (!isValid) {
                         console.log(444)
                         result = 202
 
                     } else {
+                        result = 200
+                        result_data = {
+                            data,
+                            thead
+                        }
                         console.log(333)
                     }
-                    // console.log(thead)
-                    
-                    // console.log(data)
                 }
             }
             if (isDir) {
@@ -120,5 +122,6 @@ export function fileDisplay(filePath) {
 }
 
 export {
-    result
+    result,
+    result_data
 }

@@ -11,8 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
 import { UserService } from 'src/user/user.service';
 import { encryptPassword } from 'src/utils/cryptogram';
-import { fileDisplay, result } from '../utils/index'
+import { fileDisplay, result, result_data } from '../utils/index'
 import dayjs = require('dayjs');
+import { InjectRepository } from '@nestjs/typeorm';
+import { iphone } from 'src/entities/phone.entity';
+import { Repository } from 'typeorm';
 var fs = require('fs');
 var compressing = require("compressing");
 @Injectable()
@@ -20,7 +23,8 @@ export class AuthService {
     constructor(
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
-        private readonly commonService: CommonService
+        private readonly commonService: CommonService,
+        @InjectRepository(iphone) private readonly iphoneRepository: Repository<iphone>
     ) { }
 
     public access_token: string
@@ -113,25 +117,52 @@ export class AuthService {
         let uploadFileName = file['originalname'].split('.')
         // 防止用户带日期或版本号上传
         let setFileName = uploadFileName.slice(0, uploadFileName.length - 1).join('.')
-        return await compressing.zip.uncompress(dir, `./decompression/${dayjs().format('YYYY-MM-DD')}`)
+        let code = 200,
+            msg = ''
+        await compressing.zip.uncompress(dir, `./decompression/${dayjs().format('YYYY-MM-DD')}`)
             .then(async () => {
                 let filePath = './decompression'
                 await fileDisplay(filePath)
                 if (result == 201) {
-                    return {
-                        code: 201,
-                        msg: '文件读取失败'
+                    code = 201
+                    msg = '文件读取失败'
+                } else if (result == 202) {
+                    code = 202
+                    msg = 'Excel表格式不对'
+                } else {
+                    code = 200
+                    msg = '文件上传解析成功'
+                    let { data, thead } = result_data
+                    const insertData = []
+                    for (let i = 0; i < 3; i++) {
+                        insertData.push({
+                            id: i,
+                            views_title: data[i][thead[0]],
+                            commit_id: data[i][thead[1]],
+                            img_pat: data[i][thead[2]],
+                            views_price: data[i][thead[3]],
+                            view_fee: data[i][thead[4]],
+                            province: data[i][thead[5]],
+                            city: data[i][thead[6]],
+                            views_sales: data[i][thead[7]],
+                            comment_count: data[i][thead[8]],
+                            shop_name: data[i][thead[9]],
+                            detail_url: data[i][thead[10]],
+                            comment_url: data[i][thead[11]],
+                            shop_link: data[i][thead[12]],
+                        })
                     }
-                } else if(result == 202) {
-                    return {
-                        code: 202,
-                        msg: 'Excel表格式不对'
-                    }
+                    this.iphoneRepository.save(insertData)
+                    // this.iphoneRepository.insert(insertData)
+                    console.log(insertData)
                 }
 
             })
             .catch(err => {
                 return err
             });
+        return {
+            code, msg
+        }
     }
 }

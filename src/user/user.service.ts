@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2021-01-04 11:46:58
- * @LastEditTime: 2021-01-11 14:29:28
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \NestjsProject\src\user\user.service.ts
- */
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
