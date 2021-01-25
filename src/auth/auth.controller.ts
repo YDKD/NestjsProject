@@ -6,7 +6,7 @@
  * @Description: Auth Controller
  * @FilePath: \NestjsProject\src\auth\auth.controller.ts
  */
-import { BadRequestException, Body, Controller, Get, Param, Post, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Param, Post, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -28,6 +28,7 @@ export class AuthController {
     // 登录
     @UseGuards(AuthGuard('local'))
     @Post('/login')
+    @HttpCode(200)
     async login(@Body() body: LoginDto) {
         return await this.authService.login(body.username, body.password)
 

@@ -13,7 +13,7 @@ import { BadRequestException, HttpCode, HttpException, HttpStatus } from "@nestj
 var fs = require('fs')
 var path = require('path')
 var result = 300
-var result_data:any
+var result_data: any
 import { readFile, utils } from 'xlsx'
 function random(max, min) {
     return Math.round(Math.random() * (max - min) + min);
@@ -119,6 +119,20 @@ export function fileDisplay(filePath) {
             }
         }
     })
+}
+
+// 确定用户的权限列表
+export function getRouterList(user_auth: any, allRouterList) {
+    let user_auth_arr = user_auth.split(',')
+    let userRouterList = []
+    user_auth_arr.map((rid) => {
+        allRouterList.map((router) => {
+            if(router.id.toString() == rid) {
+                userRouterList.push(router)
+            }
+        })
+    })
+    return userRouterList
 }
 
 export {

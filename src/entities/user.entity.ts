@@ -54,4 +54,11 @@ export class UserEntity {
     comment: '修改时间'
   })
   update_time: Timestamp;
+
+  @Column({
+    type: 'varchar',
+    default: '',
+    comment: '用户路由列表'
+  })
+  auth: string
 }

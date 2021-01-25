@@ -35,7 +35,6 @@ export class InitMiddleware implements NestMiddleware {
       if (result) {
         next()
       } else {
-        console.log(333)
         throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED)
       }
     } else {

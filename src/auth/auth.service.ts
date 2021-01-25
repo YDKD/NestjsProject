@@ -11,11 +11,13 @@ import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
 import { UserService } from 'src/user/user.service';
 import { encryptPassword } from 'src/utils/cryptogram';
-import { fileDisplay, result, result_data } from '../utils/index'
+import { fileDisplay, getRouterList, result, result_data } from '../utils/index'
 import dayjs = require('dayjs');
 import { InjectRepository } from '@nestjs/typeorm';
 import { iphone } from 'src/entities/phone.entity';
 import { Repository } from 'typeorm';
+import { last } from 'rxjs/operators';
+import { jsonParse } from 'src/utils/json';
 var fs = require('fs');
 var compressing = require("compressing");
 @Injectable()
@@ -47,10 +49,14 @@ export class AuthService {
      */
     async validateUser(username: string, password: string): Promise<any> {
         const user = await this.userService.findOneByName(username);
-        const salt = user.passwd_salt
-        const hashPassword = encryptPassword(password, salt)
-        if (user && user.password == hashPassword) {
-            return user
+        if (user) {
+            const salt = user.passwd_salt
+            const hashPassword = encryptPassword(password, salt)
+            if (user && user.password == hashPassword) {
+                return user
+            } else {
+                return null
+            }
         } else {
             return null
         }
@@ -63,26 +69,46 @@ export class AuthService {
      * @return {*}
      */
     async login(username, password) {
-        const payload = { sub: username, password: password }
-        let access_token = this.jwtService.sign(payload)
         let res = await this.userService.findOneByName(username)
-        let userInfo = {
-            user_id: res.user_id,
-            username: res.username,
-            email: res.email,
-            role: res.role,
-        }
-        let userInfoStringfy = JSON.stringify(userInfo)
-        // 返回 token
-        let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy)
-        // redis 存储token
-        this.commonService.set(username, access_token)
-        let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
-        this.access_token = access_token
-        this.exp = exptime
-        return {
-            access_token: return_token,
-            exp: exptime
+        if (res) {
+            const salt = res.passwd_salt
+            const hashPassword = encryptPassword(password, salt)
+            if (res.password == hashPassword) {
+                const payload = { sub: username, password: password }
+                let access_token = this.jwtService.sign(payload)
+                let userInfo = {
+                    user_id: res.user_id,
+                    username: res.username,
+                    email: res.email,
+                }
+                // 用户信息字符串
+                let userInfoStringfy = JSON.stringify(userInfo)
+                // 用户路由字符串
+                // 获取用户对应的列表
+                let userRouterLists = await this.getUserRouterList(res.auth)
+                console.log(userRouterLists)
+                // 返回 token
+                let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy) + ':' + await this.commonService.encrypt(JSON.stringify(userRouterLists))
+                // redis 存储token
+                this.commonService.set(username, access_token)
+                let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
+                this.access_token = access_token
+                this.exp = exptime
+                return {
+                    access_token: return_token,
+                    exp: exptime
+                }
+            } else {
+                return {
+                    code: 50009,
+                    msg: '密码错误'
+                }
+            }
+        } else {
+            return {
+                code: 50008,
+                msg: '未找到该用户信息'
+            }
         }
     }
 
@@ -110,6 +136,16 @@ export class AuthService {
         return await this.commonService.encrypt(data)
     }
 
+    // 根据用户的权限列表去获取对应的列表
+    async getUserRouterList(user_auth) {
+        // 1、获取所有的路由列表
+        let res = await this.iphoneRepository.query(`SELECT * FROM router_list`)
+        let router_list = jsonParse(res)
+        // 2、调用一个工具函数，根据用户的auth列表去确定用户有哪些列表
+        let user_router_list = getRouterList(user_auth, router_list)
+        return user_router_list
+    }
+
 
     // 上传文件
     async uploadFile(file) {
@@ -134,9 +170,18 @@ export class AuthService {
                     msg = '文件上传解析成功'
                     let { data, thead } = result_data
                     const insertData = []
+                    // 查询最后一条数据的id
+                    let result_last_id = await this.iphoneRepository.query(`SELECT id FROM iphone ORDER BY id DESC LIMIT 1`)
+                    if (result_last_id.length == 0) {
+                        result_last_id = [
+                            { id: 0 }
+                        ]
+                    }
+                    let last_id = jsonParse(result_last_id)[0]['id']
+                    console.log(last_id)
                     for (let i = 0; i < 3; i++) {
                         insertData.push({
-                            id: i,
+                            id: last_id ? last_id + i + 1 : i,
                             views_title: data[i][thead[0]],
                             commit_id: data[i][thead[1]],
                             img_pat: data[i][thead[2]],
@@ -152,8 +197,9 @@ export class AuthService {
                             shop_link: data[i][thead[12]],
                         })
                     }
-                    this.iphoneRepository.save(insertData)
-                    // this.iphoneRepository.insert(insertData)
+                    console.log(insertData)
+                    // this.iphoneRepository.save(insertData)
+                    this.iphoneRepository.insert(insertData)
                     console.log(insertData)
                 }
 
