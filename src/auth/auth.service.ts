@@ -83,12 +83,8 @@ export class AuthService {
                 }
                 // 用户信息字符串
                 let userInfoStringfy = JSON.stringify(userInfo)
-                // 用户路由字符串
-                // 获取用户对应的列表
-                let userRouterLists = await this.getUserRouterList(res.auth)
-                console.log(userRouterLists)
                 // 返回 token
-                let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy) + ':' + await this.commonService.encrypt(JSON.stringify(userRouterLists))
+                let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy)
                 // redis 存储token
                 this.commonService.set(username, access_token)
                 let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
@@ -110,6 +106,14 @@ export class AuthService {
                 msg: '未找到该用户信息'
             }
         }
+    }
+
+    async userRouterList(username) {
+        let return_res = await this.iphoneRepository.query(`SELECT auth FROM user_entity WHERE username = '${username}'`)
+        let res = jsonParse(return_res)
+        // 获取用户对应的列表
+        return await this.getUserRouterList(res[0].auth)
+
     }
 
     /**
@@ -140,6 +144,7 @@ export class AuthService {
     async getUserRouterList(user_auth) {
         // 1、获取所有的路由列表
         let res = await this.iphoneRepository.query(`SELECT * FROM router_list`)
+        console.log(res)
         let router_list = jsonParse(res)
         // 2、调用一个工具函数，根据用户的auth列表去确定用户有哪些列表
         let user_router_list = getRouterList(user_auth, router_list)

@@ -87,4 +87,9 @@ export class AuthController {
         }
 
     }
+
+    @Get('/user_router_list/:username')
+    async getUserRouterList(@Param('username')  username) {
+       return await this.authService.userRouterList(username)
+    }
 }
