@@ -144,7 +144,6 @@ export class AuthService {
     async getUserRouterList(user_auth) {
         // 1、获取所有的路由列表
         let res = await this.iphoneRepository.query(`SELECT * FROM router_list`)
-        console.log(res)
         let router_list = jsonParse(res)
         // 2、调用一个工具函数，根据用户的auth列表去确定用户有哪些列表
         let user_router_list = getRouterList(user_auth, router_list)

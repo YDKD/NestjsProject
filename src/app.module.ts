@@ -16,6 +16,8 @@ import { InitMiddleware } from './middleware/init.middleware';
 import { UserModule } from './user/user.module';
 import { RedisModule } from 'nestjs-redis'
 import { CommonModule } from './common/common.module';
+import { ShopModule } from './shop/shop.module';
+import { GoodsModule } from './goods/goods.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { CommonModule } from './common/common.module';
       db: 0
     }),
     CommonModule,
+    ShopModule,
+    GoodsModule,
   ],
   controllers: [AppController],
   providers: [AppService,],

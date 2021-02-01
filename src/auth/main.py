@@ -10,9 +10,9 @@ import sys
 # 此处写入登录之后自己的cookies
 cookie = '_uab_collina=161044538781433464813309; alitrackid=login.taobao.com; lastalitrackid=login.taobao.com; x5sec=7b2274616f62616f2d73686f707365617263683b32223a223763653962343535346534313135633835636438613536663438383864363162434b6e532f763846454d6d576f35717039634f4a4e526f4d4d6a45334d7a6b784f4463324f44737a227d; _samesite_flag_=true; cookie2=1f65ca4d1b132889b87e8de0c2600198; t=18672998b70005b7b03f4d84dbf0a119; _tb_token_=345b3574eda08; sgcookie=E100QrDoY7ocMfRjJ%2FJS6RvOtV3lboD2il8Hb4Bhi5l8sV1yJb0O6JYuY8Xyfg17I1Ehn4apYgbLnViYfa7CmAWGlw%3D%3D; unb=2173918768; uc3=vt3=F8dCuAFcT0%2F8cvbhaPo%3D&lg2=V32FPkk%2Fw0dUvg%3D%3D&nk2=AQuBosO4j8I%3D&id2=UUkJZW6fmmVL2w%3D%3D; csg=9aeb26fc; lgc=boby%5Cu946B%5Cu604B; cookie17=UUkJZW6fmmVL2w%3D%3D; dnk=boby%5Cu946B%5Cu604B; skt=5978da0e0e40f611; existShop=MTYxMDU5MDU1MA%3D%3D; uc4=id4=0%40U2uFU3CL5gIO6gpSGtHBzx0T8Vmz&nk4=0%40A6ZBXnpzS01uTaZdt%2FCv5kY6xw%3D%3D; tracknick=boby%5Cu946B%5Cu604B; _cc_=Vq8l%2BKCLiw%3D%3D; _l_g_=Ug%3D%3D; sg=%E6%81%8B8a; _nk_=boby%5Cu946B%5Cu604B; cookie1=BvbYhTgJoagfvi2OFmKW4yeymDlsss71fxOW5fJpOnY%3D; enc=TNsLXfmbCD6pu8OFqcjFb6NyvTotEnxoC8z7WKF9G8UL0LmoRqQuz9a%2FTt%2BlQG32%2BMpd2oUP%2Bc6jndccq7jmGg%3D%3D; mt=ci=34_1; uc1=cookie21=VFC%2FuZ9aiKCaj7AzMHh1&cookie14=Uoe1gq3dnbvBqg%3D%3D&cookie16=UIHiLt3xCS3yM2h4eKHS9lpEOw%3D%3D&existShop=false&pas=0&cookie15=U%2BGCWk%2F75gdr5Q%3D%3D; thw=cn; cna=DT+MF+4LTk4CAbaWLCkwz3+f; xlly_s=1; JSESSIONID=6BF090F523CF854D2E943C636C667576; isg=BO7uNFh0PSZeyUl2H_PYA5aDP0Sw77LpVEMTHxi3Q_Gs-45VgH-Y-ADxs2cXI6oB; tfstk=cB6lBOw01_RWnaRc1895jmH4SJNAZvPyP9WV3tg_1bWccgWVi6hq_7i8mUQlpX1..; l=eBPBH1F7Ok6okvQbBOfZnurza77T_IRAguPzaNbMiOCP9wfp5GelWZ83FuY9CnGVh646R3-Id_-7BeYBqhYan5U68yvNIskmn'
 # 搜索的商品名称
-search_goods_name = 'macbook' 
+search_goods_name = 'macbook'
 # 保存的商品名称
-save_goods_name = 'macbook' 
+save_goods_name = 'macbook'
 # 获取页面信息
 
 
@@ -136,7 +136,8 @@ def connect_mysql(file_name, listData):
     cursor = conn.cursor()
     try:
         # sql1 = 'CREATE TABLE {table_name}(views_title VARCHAR(100), commit_id VARCHAR(20), img_pat VARCHAR(1000),  views_price DECIMAL(10, 2), view_fee INT(2), province VARCHAR(10), city VARCHAR(10), views_sales VARCHAR(7), comment_count INT(10), shop_name VARCHAR(20), detail_url VARCHAR(1000), comment_url  VARCHAR(1000), shop_link    VARCHAR(1000))CHARSET = utf8'
-        sql1 = 'CREATE TABLE ' + file_name + '(views_title VARCHAR(100),commit_id VARCHAR(20),img_pat VARCHAR(1000),views_price DECIMAL(10, 2),view_fee INT(2), province VARCHAR(10),city VARCHAR(10), views_sales VARCHAR(10),comment_count VARCHAR(10), shop_name VARCHAR(20),detail_url VARCHAR(1000),comment_url  VARCHAR(1000), shop_link VARCHAR(1000))CHARSET=utf8;'
+        sql1 = 'CREATE TABLE ' + file_name + \
+            '(views_title VARCHAR(100),commit_id VARCHAR(20),img_pat VARCHAR(1000),views_price DECIMAL(10, 2),view_fee INT(2), province VARCHAR(10),city VARCHAR(10), views_sales VARCHAR(10),comment_count VARCHAR(10), shop_name VARCHAR(20),detail_url VARCHAR(1000),comment_url  VARCHAR(1000), shop_link VARCHAR(1000))CHARSET=utf8;'
         cursor.execute(sql1)
     except:
         print('创建数据库失败')

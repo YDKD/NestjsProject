@@ -14,6 +14,7 @@ var fs = require('fs')
 var path = require('path')
 var result = 300
 var result_data: any
+var axios = require('axios')
 import { readFile, utils } from 'xlsx'
 function random(max, min) {
     return Math.round(Math.random() * (max - min) + min);
@@ -127,12 +128,24 @@ export function getRouterList(user_auth: any, allRouterList) {
     let userRouterList = []
     user_auth_arr.map((rid) => {
         allRouterList.map((router) => {
-            if(router.id.toString() == rid) {
+            if (router.id.toString() == rid) {
                 userRouterList.push(router)
             }
         })
     })
     return userRouterList
+}
+
+export function get(url, params) {
+    return new Promise((resolve, reject) => {
+        axios.get(url, {
+            params: params
+        }).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            reject(err.data)
+        })
+    })
 }
 
 export {

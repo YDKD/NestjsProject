@@ -24,6 +24,9 @@ export class InitMiddleware implements NestMiddleware {
     if (this.authService.access_token && req.headers.authorization && this.authService.exp > new Date().getTime()) {
       // 获取用户上传token
       let postToken = req.headers.authorization
+      if(postToken.includes('Bearer')) {
+        postToken = postToken.split(' ')[1]
+      }
       // 解析token
       let decode: any = await this.authService.decode(postToken)
       // 获取token中的sub用户名

@@ -7,7 +7,7 @@ let obj = {
     database: process.env.DB_DATABASE,
     // entities: ["src/**/*.entity{.ts,.js}"],
     entities: ['dist/**/*.entity{.ts,.js}'],
-    synchronize: true,
+    synchronize: false,
     autoLoadEntities: true,
 }
 if (process.env.NODE_ENV == 'development') {

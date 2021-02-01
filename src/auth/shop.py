@@ -48,6 +48,7 @@ def forMatter(str):
     newArr = ' '.join(re)
     return newArr
 
+
 def parsePage(html):
     list = []
     try:

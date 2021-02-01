@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn, Timestamp } from "typeorm";
 
 @Entity()
 export class iphone {
-    @PrimaryColumn({ comment: '主键id' })
+    @PrimaryColumn({ comment: '主键id'})
     id: number;
 
     @Column({ type: 'varchar', comment: '商品标题' })
@@ -31,7 +31,7 @@ export class iphone {
     comment_url: string;
     @Column({ type: 'varchar', comment: '商品链接' })
     shop_link: string;
-    @Column({ type: 'timestamp', default: () => 'current_timestamp', select: false, comment: '创建时间' })
+    @Column({ type: 'timestamp', default: () => 'current_timestamp', comment: '创建时间' })
     create_time: Timestamp;
 
     @Column({
