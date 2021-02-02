@@ -135,4 +135,10 @@ export class UserController {
         }
 
     }
+
+    @Get('/ip')
+    async getUserPlace(@Query() query) {
+        let res =  await this.userService.getUserPlace(query.user_id)
+        return res
+    }
 }

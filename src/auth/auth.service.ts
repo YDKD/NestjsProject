@@ -151,6 +151,8 @@ export class AuthService {
     }
 
 
+    
+
     // 上传文件
     async uploadFile(file) {
         let dir = `./upload/${dayjs().format('YYYY-MM-DD')}/${file['originalname']}`

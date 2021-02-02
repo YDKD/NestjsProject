@@ -9,7 +9,7 @@ import { jsonParse } from 'src/utils/json';
 import { Repository } from 'typeorm';
 import { codeOverdue } from 'src/utils';
 import { CommonService } from 'src/common/common.service';
-
+var axios = require('axios')
 @Injectable()
 export class UserService {
   constructor(
@@ -94,6 +94,18 @@ export class UserService {
         code: 201
       }
     }
+  }
+
+  // 获取用户当前登录地址
+  async getUserPlace(id) {
+    let res =  await axios.get("https://restapi.amap.com/v3/ip", {
+        params: {
+          key: "257ece5abf371510c69e13639b9dc480",
+        },
+      })
+    let place = res.data.province + "、" + res.data.city
+    this.userRepository.query(`UPDATE user_entity SET user_login_place = '${place}' WHERE user_id = ${id}`)
+    return res.data
   }
 
   /**

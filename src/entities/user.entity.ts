@@ -46,6 +46,9 @@ export class UserEntity {
   @Column({ type: 'timestamp', default: () => 'current_timestamp', select: false, comment: '创建时间' })
   create_time: Timestamp;
 
+  @Column({ type: 'varchar', default: '', comment: '用户登录地址' })
+  user_login_place: string
+
   @Column({
     type: 'timestamp',
     onUpdate: 'current_timestamp',

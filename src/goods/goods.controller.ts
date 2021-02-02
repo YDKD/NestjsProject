@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { query } from 'express';
 import { GoodsService } from './goods.service';
@@ -20,8 +20,14 @@ export class GoodsController {
         }
     }
 
-    @Get('/screen')
-    async screen(){
-        this.goodService.getSendPlace()
+    @Get('/shortest')
+    async screen(@Query() query) {
+        return await this.goodService.getSendPlace(query.user_place)
+    }
+
+
+    @Post('/export_hot')
+    async exporHotData(@Body() body) {
+        return await this.goodService.exportData(body.data, body.check)
     }
 }

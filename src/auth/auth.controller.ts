@@ -92,4 +92,6 @@ export class AuthController {
     async getUserRouterList(@Param('username')  username) {
        return await this.authService.userRouterList(username)
     }
+
+    
 }
