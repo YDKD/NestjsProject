@@ -97,20 +97,8 @@ export class UserService {
   }
 
   // 获取用户当前登录地址
-  async getUserPlace(id) {
-    let ip: any
-    await axios.get('https://api.ipify.org/').then(res => {
-      ip = res.data
-    })
-    let res =  await axios.get("https://restapi.amap.com/v3/ip", {
-        params: {
-          key: "257ece5abf371510c69e13639b9dc480",
-          ip: ip
-        },
-      })
-    let place = res.data.province + "、" + res.data.city
-    this.userRepository.query(`UPDATE user_entity SET user_login_place = '${place}' WHERE user_id = ${id}`)
-    return res.data
+  async getUserPlace(id, place) {
+    return await this.userRepository.query(`UPDATE user_entity SET user_login_place = '${place}' WHERE user_id = ${id}`)
   }
 
   /**
