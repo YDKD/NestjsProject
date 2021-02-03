@@ -98,9 +98,14 @@ export class UserService {
 
   // 获取用户当前登录地址
   async getUserPlace(id) {
+    let ip: any
+    await axios.get('https://api.ipify.org/').then(res => {
+      ip = res.data
+    })
     let res =  await axios.get("https://restapi.amap.com/v3/ip", {
         params: {
           key: "257ece5abf371510c69e13639b9dc480",
+          ip: ip
         },
       })
     let place = res.data.province + "、" + res.data.city
