@@ -138,7 +138,7 @@ export class UserController {
 
     @Get('/ip')
     async getUserPlace(@Query() query) {
-        return await this.userService.getUserPlace(query.user_id, query.user_place)
+        return await this.userService.getUserPlace(query.user_id, query.user_place, query.location)
 
     }
 }

@@ -97,8 +97,8 @@ export class UserService {
   }
 
   // 获取用户当前登录地址
-  async getUserPlace(id, place) {
-    return await this.userRepository.query(`UPDATE user_entity SET user_login_place = '${place}' WHERE user_id = ${id}`)
+  async getUserPlace(id, place, location) {
+    return await this.userRepository.query(`UPDATE user_entity SET user_login_place = '${place}',location = '${location}' WHERE user_id = ${id}`)
   }
 
   /**
