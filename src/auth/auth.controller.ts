@@ -93,5 +93,8 @@ export class AuthController {
        return await this.authService.userRouterList(username)
     }
 
-    
+    @Get('/map')
+    async getMap(){
+        return await this.authService.userMap()
+    }
 }

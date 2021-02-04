@@ -76,10 +76,13 @@ export class AuthService {
             if (res.password == hashPassword) {
                 const payload = { sub: username, password: password }
                 let access_token = this.jwtService.sign(payload)
+                console.log(res)
                 let userInfo = {
                     user_id: res.user_id,
                     username: res.username,
                     email: res.email,
+                    role: res.role,
+                    choose_type: res.choose_type
                 }
                 // 用户信息字符串
                 let userInfoStringfy = JSON.stringify(userInfo)
@@ -150,7 +153,10 @@ export class AuthService {
         return user_router_list
     }
 
-
+    // 返回用户地图
+    async userMap(){
+        return 'https://www.ydkd.vip/ad782b2e3d9cfad0f9d3.html/a.html'
+    }
     
 
     // 上传文件
