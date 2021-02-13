@@ -109,7 +109,6 @@ export class UserService {
   async sendEmail(addressee) {
     let sendCode = verifyCode()
     this.send_code = sendCode
-    console.log(this.send_code)
     return this.mailerService.sendMail({
       to: addressee,
       subject: "Foss-Store注册校验码",

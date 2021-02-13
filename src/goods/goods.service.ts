@@ -20,7 +20,6 @@ export class GoodsService {
 
     // 获取宝贝的发货地
     async getSendPlace(user_curr_place) {
-        console.log(user_curr_place)
         let res = await this.iphonRepository.query(`SELECT * FROM iphone`)
         let new_res = jsonParse(res)
         let place = []

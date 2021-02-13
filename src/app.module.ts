@@ -18,6 +18,7 @@ import { RedisModule } from 'nestjs-redis'
 import { CommonModule } from './common/common.module';
 import { ShopModule } from './shop/shop.module';
 import { GoodsModule } from './goods/goods.module';
+import { SystemModule } from './system/system.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { GoodsModule } from './goods/goods.module';
     CommonModule,
     ShopModule,
     GoodsModule,
+    SystemModule,
   ],
   controllers: [AppController],
   providers: [AppService,],

@@ -76,7 +76,6 @@ export class AuthService {
             if (res.password == hashPassword) {
                 const payload = { sub: username, password: password }
                 let access_token = this.jwtService.sign(payload)
-                console.log(res)
                 let userInfo = {
                     user_id: res.user_id,
                     username: res.username,
