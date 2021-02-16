@@ -48,6 +48,12 @@ export class UserEntity {
 
   @Column({ type: 'varchar', default: '', comment: '用户登录地址' })
   user_login_place: string
+  
+  @Column({ type: 'varchar', default: '', comment: '用户登录经纬度' })
+  location: string
+
+  @Column({ type: 'varchar', default: '', comment: '用户配置筛选类型' })
+  choose_type: string
 
   @Column({
     type: 'timestamp',

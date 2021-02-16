@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { iphone } from 'src/entities/phone.entity';
+import { UserService } from 'src/user/user.service';
 import { get } from 'src/utils';
 import { jsonParse } from 'src/utils/json';
 import { Repository } from 'typeorm';
@@ -9,13 +10,22 @@ var xlsx = require('node-xlsx')
 @Injectable()
 export class GoodsService {
     constructor(
-        @InjectRepository(iphone) private readonly iphonRepository: Repository<iphone>
+        @InjectRepository(iphone) private readonly iphonRepository: Repository<iphone>,
+        private readonly userService: UserService
     ) { }
     // 获取热销宝贝-iphone手机信息
-    async getHotIphoneData(currentPage, pageSize) {
-        // let res = await this.iphonRepository.query(`SELECT * from iphone LIMIT ${currentPage - 1}, ${pageSize}`)
-        let result = await this.iphonRepository.findAndCount({ skip: currentPage - 1, take: pageSize })
-        return jsonParse(result)
+    async getHotIphoneData(currentPage, pageSize, user_id) {
+        let checkTable = await this.userService.getUserConfigCheck(user_id)
+        let sql = `SELECT * from ${checkTable} LIMIT ${currentPage - 1}, ${pageSize}`
+        let result = await this.iphonRepository.query(sql)
+        let total = jsonParse(await this.iphonRepository.findAndCount())
+        total = total[1]
+        result = jsonParse(result)
+        // let result = await this.iphonRepository.findAndCount({ skip: currentPage - 1, take: pageSize })
+        return {
+            total,
+            result
+        }
     }
 
     // 获取宝贝的发货地

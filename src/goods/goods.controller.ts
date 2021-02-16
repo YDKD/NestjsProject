@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { query } from 'express';
 import { GoodsService } from './goods.service';
 
@@ -10,10 +10,9 @@ export class GoodsController {
         private readonly goodService: GoodsService
     ) { }
     @Get('/hot_iphone')
+    @ApiOperation({summary: '获取热销数据'})
     async getHotIphoneData(@Query() query) {
-        let res = await this.goodService.getHotIphoneData(query.currentPage, query.pageSize)
-        let total: number = res[1]
-        let result = res[0]
+        let { total, result } = await this.goodService.getHotIphoneData(query.currentPage, query.pageSize, query.user_id)
         return {
             result,
             total
@@ -21,12 +20,14 @@ export class GoodsController {
     }
 
     @Get('/shortest')
+    @ApiOperation({summary: '筛选用户最短距离数据'})
     async screen(@Query() query) {
         return await this.goodService.getSendPlace(query.user_place)
     }
 
 
     @Post('/export_hot')
+    @ApiOperation({summary: '导出数据'})
     async exporHotData(@Body() body) {
         return await this.goodService.exportData(body.data, body.check)
     }

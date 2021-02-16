@@ -10,7 +10,7 @@ import { BadRequestException, Body, Controller, Get, HttpCode, Param, Post, Uplo
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -29,6 +29,7 @@ export class AuthController {
     @UseGuards(AuthGuard('local'))
     @Post('/login')
     @HttpCode(200)
+    @ApiOperation({ summary: '登录' })
     async login(@Body() body: LoginDto) {
         return await this.authService.login(body.username, body.password)
 
@@ -38,6 +39,7 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     @Get('/encrypt/:password')
     @ApiBearerAuth()
+    @ApiOperation({ summary: '加密密码' })
     async encrypt(@Param('password') password) {
         return await this.authService.encrypt(password)
     }
@@ -54,6 +56,7 @@ export class AuthController {
     }
 
     @Get('/logout/:username')
+    @ApiOperation({ summary: '退出登录' })
     async logout(@Param('username') username) {
         await this.authService.logout(username)
     }
@@ -69,6 +72,7 @@ export class AuthController {
     }
 
     @Post('/upload')
+    @ApiOperation({ summary: '上传文件' })
     @UseInterceptors(FileFieldsInterceptor([
         { name: 'file', maxCount: 1 }
     ]))
@@ -89,12 +93,14 @@ export class AuthController {
     }
 
     @Get('/user_router_list/:username')
-    async getUserRouterList(@Param('username')  username) {
-       return await this.authService.userRouterList(username)
+    @ApiOperation({ summary: '根据用户名获取用户的路由列表' })
+    async getUserRouterList(@Param('username') username) {
+        return await this.authService.userRouterList(username)
     }
 
     @Get('/map')
-    async getMap(){
+    @ApiOperation({ summary: '获取用户登录地址可视化' })
+    async getMap() {
         return await this.authService.userMap()
     }
 }

@@ -26,12 +26,12 @@ export class UserController {
         private readonly userService: UserService,
     ) { }
 
-    @UseGuards(AuthGuard('jwt'))
     @Get('/user_id')
     @ApiBearerAuth()
     @ApiOperation({ summary: '查询用户信息' })
     async findOneByUserId(@Query() query: findOne) {
-        return await this.userService.findOneByUserId(query.id)
+         await this.userService.findOneByUserId(query.id)
+         await this.userService.getUserConfigCheck(query.id)
     }
 
 
@@ -110,11 +110,11 @@ export class UserController {
         }
     }
 
-    @Post('/reset-password')
+    @Post('/forget-password')
     @HttpCode(200)
-    @ApiOperation({ summary: '重置密码' })
+    @ApiOperation({ summary: '忘记密码' })
     async resetPassword(@Body() body: registerUserDto) {
-        let { code, data } = await this.userService.resetPassword(body.data)
+        let { code, data } = await this.userService.fogetPassowrd(body.data)
         if (code === 201) {
             return {
                 status: 202,
@@ -136,9 +136,38 @@ export class UserController {
 
     }
 
+    @Post('/reset-username')
+    @ApiOperation({summary: '重置用户名'})
+    @HttpCode(200)
+    async resetUsername(@Body() body) {
+        return await this.userService.resetUsername(body)
+    }
+
     @Get('/ip')
+    @ApiOperation({summary: '根据用户登录ip存储用户地址'})
+    @HttpCode(200)
     async getUserPlace(@Query() query) {
         return await this.userService.getUserPlace(query.user_id, query.user_place, query.location)
+    }
 
+    @Post('/reset-password')
+    @HttpCode(200)
+    @ApiOperation({summary: '重置密码'})
+    async resetPass(@Body() body) {
+        return await this.userService.resetPassword(body)
+    }
+
+    @Post('/validate/email')
+    @HttpCode(200)
+    @ApiOperation({summary: '验证邮箱'})
+    async validateEmail(@Body() body) {
+        return await this.userService.validateEmail(body)
+    }
+
+    @Post('/reset-email')
+    @HttpCode(200)
+    @ApiOperation({summary: '重置邮箱'})
+    async resetEmail(@Body() body) {
+        return await this.userService.resetEmail(body)
     }
 }

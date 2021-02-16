@@ -148,6 +148,10 @@ export function get(url, params) {
     })
 }
 
+export function getUserCheck(str) {
+    
+}
+
 export {
     result,
     result_data
