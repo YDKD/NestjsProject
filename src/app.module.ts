@@ -19,6 +19,7 @@ import { CommonModule } from './common/common.module';
 import { ShopModule } from './shop/shop.module';
 import { GoodsModule } from './goods/goods.module';
 import { SystemModule } from './system/system.module';
+import { SellerModule } from './seller/seller.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SystemModule } from './system/system.module';
     ShopModule,
     GoodsModule,
     SystemModule,
+    SellerModule,
   ],
   controllers: [AppController],
   providers: [AppService,],

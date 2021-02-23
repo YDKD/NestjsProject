@@ -10,6 +10,7 @@ import { ShopService } from './shop.service';
     TypeOrmModule.forFeature([UserEntity])
   ],
   controllers: [ShopController],
-  providers: [ShopService]
+  providers: [ShopService],
+  exports: [ShopService]
 })
 export class ShopModule {}

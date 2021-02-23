@@ -12,7 +12,6 @@ export class ShopService {
     ) { }
     choose_shop: string
 
-
     async getHotShopData(id, currentPage, pageSize) {
         // 根据用户id查询出用户配置的筛选类型
         let sql = `SELECT choose_type FROM user_entity WHERE user_id = ${id}`
@@ -20,6 +19,7 @@ export class ShopService {
         res = jsonParse(res)
         let choose_type = res[0].choose_type
         let user_choose_shop = choose_type.split(',')[1]
+        
         // 根据筛选的类型，获取对应的店铺数据库表
         let choose_sql = `SELECT shop FROM categories WHERE type = '${user_choose_shop}'`
         let choose_res = await this.userRepository.query(choose_sql)
