@@ -9,5 +9,8 @@ import sys
 import json
 
 str = '\\"sgr\\":\\"100.00%\\",\\"ind\\":\\"手机\\",\\"mas\\":\\"4.88\\",\\"mg\\":\\"7.37%\\",\\"sas\\":\\"4.88\\",\\"sg\\":\\"13.31%\\",\\"cas\\":\\"4.90\\",\\"cg\\":\\"18.65%\\",\\"encryptedUserId\\":\\"UvFcYMmHyOmHGONTT\\"'
+str = str + '}'
+str = '{' + str
 res = str.replace('\\', '')
-print(res)
+result = json.loads(res)
+print(result['sgr'])

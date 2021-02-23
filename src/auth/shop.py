@@ -9,10 +9,10 @@ import pymysql
 import sys
 import json
 # 此处写入登录之后自己的cookies
-cookie = '_uab_collina=161044538781433464813309; t=18672998b70005b7b03f4d84dbf0a119; enc=TNsLXfmbCD6pu8OFqcjFb6NyvTotEnxoC8z7WKF9G8UL0LmoRqQuz9a%2FTt%2BlQG32%2BMpd2oUP%2Bc6jndccq7jmGg%3D%3D; thw=cn; cookie2=22a4a951a85eded1d68c951b07c1a96b; _tb_token_=5ee8ee58e589b; alitrackid=www.taobao.com; _samesite_flag_=true; _m_h5_tk=d39e066500507c79654136ca3d48656d_1610621438768; _m_h5_tk_enc=fa0b9f73782b34da02f5896c3cc0f56c; lastalitrackid=login.taobao.com; xlly_s=1; mt=ci=0_0; cna=DT+MF+4LTk4CAbaWLCkwz3+f; x5sec=7b2274616f62616f2d73686f707365617263683b32223a223561373639393534636464386566313163613230613433366437646136333837434e326368494147454b616f324c69456b507a4870414561445449784e7a4d354d5467334e6a67374d54453d227d; JSESSIONID=DA36E35C5C5F62E4ABED57B5AE4546DD; l=eBPBH1F7Ok6okqrDBOfZlurza77TvIRfguPzaNbMiOCPOaCpWGihW6GjthY9CnGVnsND-3-Id_-7BcTSyy4edxv9-e_7XPQoUdLh.; isg=BBwcqq_lkC78T1s48dmKFdDZ7TrOlcC_0smhUfYda4fmQb3LHKHGTsDzoam5SfgX; tfstk=cjuABOmjYLv0QpN-TmKlCSyaGOdlZG1YIswOWB0YDRF5D7_OiCunJDZHc5WYyQC..; sgcookie=E100TQmJk3a0c4Krs%2BZ2RdpVKCsuIzwhyu0iHmsojFeM0Yx%2FksvBko8yyoufRX8EhJaLxEEz9xeWLGJhUYUR1avl1w%3D%3D; unb=2173918768; uc1=pas=0&cookie14=Uoe1gq4SXr91Hw%3D%3D&cookie16=VT5L2FSpNgq6fDudInPRgavC%2BQ%3D%3D&cookie15=W5iHLLyFOGW7aA%3D%3D&cookie21=V32FPkk%2FgihF%2FS5nr3O5&existShop=false; uc3=vt3=F8dCuAFf%2FI6gQIgDmWk%3D&id2=UUkJZW6fmmVL2w%3D%3D&nk2=AQuBosO4j8I%3D&lg2=URm48syIIVrSKA%3D%3D; csg=47b80b43; lgc=boby%5Cu946B%5Cu604B; cookie17=UUkJZW6fmmVL2w%3D%3D; dnk=boby%5Cu946B%5Cu604B; skt=5ae80961ff0f591e; existShop=MTYxMDY4MTk1Nw%3D%3D; uc4=id4=0%40U2uFU3CL5gIO6gpSGtHBzBU%2FDUkt&nk4=0%40A6ZBXnpzS01uTaZdt%2FNlysNkrg%3D%3D; tracknick=boby%5Cu946B%5Cu604B; _cc_=V32FPkk%2Fhw%3D%3D; _l_g_=Ug%3D%3D; sg=%E6%81%8B8a; _nk_=boby%5Cu946B%5Cu604B; cookie1=BvbYhTgJoagfvi2OFmKW4yeymDlsss71fxOW5fJpOnY%3D'
+cookie = '_uab_collina=161044538781433464813309; enc=TNsLXfmbCD6pu8OFqcjFb6NyvTotEnxoC8z7WKF9G8UL0LmoRqQuz9a%2FTt%2BlQG32%2BMpd2oUP%2Bc6jndccq7jmGg%3D%3D; thw=cn; UM_distinctid=1774d44ac825b0-0ab06ad92f595f-30614701-1fa400-1774d44ac836ac; hng=CN%7Czh-CN%7CCNY%7C156; cookie2=1e65c968ddb631c6357aaebff4d4c1a5; _tb_token_=eed5bb7eed13a; alitrackid=www.taobao.com; _samesite_flag_=true; t=3c05321e8246f165fed3524d305b20af; cna=DT+MF+4LTk4CAbaWLCkwz3+f; _m_h5_tk=4f509a04e252710b98cbb4e9a7efe9ca_1614053731897; _m_h5_tk_enc=0005d09b8eb1ae87140190de41f7c140; sgcookie=E100SVDVaBIYywJnylocJutwwyNq6p4vhU08tlbKGmsjQYi0z4JBziFuIdPm%2BRaqMHoc%2FnN09m4lD1nTkI6j6JWX7g%3D%3D; uc3=vt3=F8dCuASh6IGOZrB0iUU%3D&lg2=VFC%2FuZ9ayeYq2g%3D%3D&id2=UUkJZW6fmmVL2w%3D%3D&nk2=AQuBosO4j8I%3D; csg=c3812a88; lgc=boby%5Cu946B%5Cu604B; dnk=boby%5Cu946B%5Cu604B; skt=09bebb2f4db10226; existShop=MTYxNDA0NDAyOA%3D%3D; uc4=nk4=0%40A6ZBXnpzS01uTaZds949%2BPLAhw%3D%3D&id4=0%40U2uFU3CL5gIO6gpSGtHFmm%2FwH0SB; tracknick=boby%5Cu946B%5Cu604B; _cc_=UtASsssmfA%3D%3D; lastalitrackid=login.taobao.com; mt=ci=33_1; JSESSIONID=267D486D04D241F9C95AF9582DE34FA7; xlly_s=1; uc1=cookie14=Uoe1hgbVC6oV8A%3D%3D&pas=0&cookie21=U%2BGCWk%2F7p4mBoUyS4E9C&existShop=false&cookie16=UIHiLt3xCS3yM2h4eKHS9lpEOw%3D%3D; tfstk=ckP5Bea8S3xSE1Beaz_2arVf7alCZyIjoTi8P8ljv91dG0z5i0AZfq8uKnAxBq1..; isg=BKGhnTemZUQp0vZPJPJfOj3ysG27ThVAd6aZrQN2yKgHasA8S51cEbCozJ5soq14; l=eBPBH1F7Ok6okUyyBOfwnurza77tTIRfguPzaNbMiOCPOufp5lM5W6gRuDT9CnGVnsekR3u7hqDaBb8iCy4edxv9-eOh70eEEdLh.; x5sec=7b2274616f62616f2d73686f707365617263683b32223a223132633730306563656630623437623565326536373337623833633739636365434a364e306f45474550695868754c56704e667a77414561444449784e7a4d354d5467334e6a67374d7967434d4c7262355a66362f2f2f2f2f77453d227d'
 # 搜索的商品名称
-search_shop_name = '相机'
-save_goods_name = 'camera_store'
+search_shop_name = '电脑'
+save_goods_name = 'mac_store_new'
 
 
 def getHTMLText(url):
@@ -56,6 +56,10 @@ def parsePage(html):
         shop_title = re.findall('"rawTitle":"(.*?)"', html)
         print(len(shop_title))  # 打印检索到数据信息的个数，如果此个数与后面的不一致，则数据信息不能加入列表
         print(shop_title)
+        # 店铺头像
+        shop_pic = re.findall('"picUrl":"(.*?)"', html)
+        print(len(shop_pic))
+        print(shop_pic)
         # 店铺地址
         shop_pat = re.findall('"shopUrl":"(//.*?)"', html)
         print(len(shop_pat))
@@ -84,12 +88,16 @@ def parsePage(html):
             # detail_url[i] = detail_url[i].replace('\\u003d', '=')
             # 图片地址 http加入
             shop_pat[i] = 'http:' + shop_pat[i]
+            shop_pic[i] = 'http:' + shop_pic[i]
             res = forMatter(shop_keywords[i])
             shop_wrap_res = shop_wrap[i].replace('\\', '')
+            shop_wrap_res = shop_wrap_res + '}'
+            shop_wrap_res = '{' + shop_wrap_res
+            result = json.loads(shop_wrap_res)
             # print(res)
             # 数据加入
             list.append([
-                shop_title[i], shop_pat[i], shop_rate_address[i], shop_loc[i], res, shop_wrap_res])
+                shop_title[i], shop_pic[i], shop_pat[i], shop_rate_address[i], shop_loc[i], res, result['mas'], result['ind'], result['mg'], result['sas'], result['sg'], result['cas'], result['cg'], ])
         # print(list)
         print('爬取数据成功')
         return list
@@ -111,7 +119,7 @@ def connect_mysql(file_name, listData):
     try:
         # sql1 = 'CREATE TABLE {table_name}(shop_title VARCHAR(100), shop_id VARCHAR(20), shop_pat VARCHAR(1000),  shop_is_tmall DECIMAL(10, 2), shop_rate_address INT(2), province VARCHAR(10), city VARCHAR(10), shop_loc VARCHAR(7), comment_count INT(10), shop_name VARCHAR(20), detail_url VARCHAR(1000), comment_url  VARCHAR(1000), shop_link    VARCHAR(1000))CHARSET = utf8'
         sql1 = 'CREATE TABLE '+file_name + \
-            '(shop_title VARCHAR(100),shop_pat VARCHAR(1000),shop_rate_address VARCHAR(1000), shop_loc VARCHAR(10), shop_keywords VARCHAR(1000), shop_wrap_info VARCHAR(1000))CHARSET=utf8'
+            '(shop_title VARCHAR(100),shop_pic VARCHAR(1000), shop_pat VARCHAR(1000),shop_rate_address VARCHAR(1000), shop_loc VARCHAR(10), shop_keywords VARCHAR(1000), mas VARCHAR(100), ind VARCHAR(100), mg VARCHAR(100),sas VARCHAR(100), sg VARCHAR(100),cas VARCHAR(100), cg VARCHAR(100))CHARSET=utf8'
         cursor.execute(sql1)
     except:
         print('创建数据库失败')
