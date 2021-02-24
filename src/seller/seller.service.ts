@@ -36,4 +36,27 @@ export class SellerService {
         }
     }
 
+    async getCityData(user_id) {
+        let sql = `SELECT choose_type FROM user_entity WHERE user_id = ${user_id}`
+        let res = await this.iphoneRepository.query(sql)
+        res = jsonParse(res)
+        let choose_type = res[0].choose_type
+        let user_choose_product = choose_type.split(',')[2]
+        // 统计交易量
+        let sql_account_product = `SELECT city, views_sales, views_price * views_price as 'total_amount' FROM ${user_choose_product} WHERE city != ''`
+        // 统计相同城市数
+        let sql_account_city = `SELECT city, COUNT(id) FROM ${user_choose_product} GROUP BY city`
+        let res_product = await this.iphoneRepository.query(sql_account_product)
+        let res_city = await this.iphoneRepository.query(sql_account_city)
+        res_product = jsonParse(res_product)
+        res_city = jsonParse(res_city)
+        let product = res_product
+        let city = res_city
+        return {
+            product,
+            city
+        }
+    }
+
+
 }

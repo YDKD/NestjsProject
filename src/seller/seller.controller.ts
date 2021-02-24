@@ -14,4 +14,9 @@ export class SellerController {
     async getProvinceData(@Param('id') id) {
         return await this.sellerService.getProvinceData(id)
     }
+
+    @Get('/city/:id')
+    async getCityData(@Param('id') id) {
+        return await this.sellerService.getCityData(id)
+    }
 }
