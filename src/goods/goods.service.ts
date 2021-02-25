@@ -29,8 +29,9 @@ export class GoodsService {
     }
 
     // 获取宝贝的发货地
-    async getSendPlace(user_curr_place) {
-        let res = await this.iphonRepository.query(`SELECT * FROM iphone`)
+    async getSendPlace(user_curr_place, user_id) {
+        let checkTable = await this.userService.getUserConfigCheck(user_id)
+        let res = await this.iphonRepository.query(`SELECT * FROM ${checkTable}`)
         let new_res = jsonParse(res)
         let place = []
         new_res.forEach((item) => {

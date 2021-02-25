@@ -20,6 +20,7 @@ import { ShopModule } from './shop/shop.module';
 import { GoodsModule } from './goods/goods.module';
 import { SystemModule } from './system/system.module';
 import { SellerModule } from './seller/seller.module';
+import { RateModule } from './rate/rate.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { SellerModule } from './seller/seller.module';
     GoodsModule,
     SystemModule,
     SellerModule,
+    RateModule,
   ],
   controllers: [AppController],
   providers: [AppService,],
@@ -50,6 +52,7 @@ export class AppModule implements NestModule {
         { path: 'user/create', method: RequestMethod.POST },
         { path: 'user/email/(.*)', method: RequestMethod.ALL },
         { path: 'user/reset-password', method: RequestMethod.ALL },
+        { path: 'rate/(.*)', method: RequestMethod.ALL },
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL })
   }

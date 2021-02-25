@@ -24,7 +24,7 @@ export class GoodsController {
     @HttpCode(200)
     @ApiOperation({summary: '筛选用户最短距离数据'})
     async screen(@Query() query) {
-        return await this.goodService.getSendPlace(query.user_place)
+        return await this.goodService.getSendPlace(query.user_place, query.user_id)
     }
 
 
