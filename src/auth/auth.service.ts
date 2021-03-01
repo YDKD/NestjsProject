@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CommonService } from 'src/common/common.service';
 import { UserService } from 'src/user/user.service';
 import { encryptPassword } from 'src/utils/cryptogram';
-import { fileDisplay, getRouterList, result, result_data } from '../utils/index'
+import { fileDisplay, getRouterList, result, result_data, rTime } from '../utils/index'
 import dayjs = require('dayjs');
 import { InjectRepository } from '@nestjs/typeorm';
 import { iphone } from 'src/entities/phone.entity';
@@ -70,42 +70,54 @@ export class AuthService {
      */
     async login(username, password) {
         let res = await this.userService.findOneByName(username)
-        if (res) {
-            const salt = res.passwd_salt
-            const hashPassword = encryptPassword(password, salt)
-            if (res.password == hashPassword) {
-                const payload = { sub: username, password: password }
-                let access_token = this.jwtService.sign(payload)
-                let userInfo = {
-                    user_id: res.user_id,
-                    username: res.username,
-                    email: res.email,
-                    role: res.role,
-                    choose_type: res.choose_type
-                }
-                // 用户信息字符串
-                let userInfoStringfy = JSON.stringify(userInfo)
-                // 返回 token
-                let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy)
-                // redis 存储token
-                this.commonService.set(username, access_token)
-                let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
-                this.access_token = access_token
-                this.exp = exptime
-                return {
-                    access_token: return_token,
-                    exp: exptime
+        let effective_time = res.effective_time
+        effective_time = rTime(effective_time)
+        let eff_time_stamp = new Date(effective_time).getTime()
+        console.log(eff_time_stamp)
+        let current_time_stamp = new Date().getTime()
+        if (current_time_stamp > eff_time_stamp) {
+            return {
+                code: 50007,
+                msg: '账号已过期'
+            }
+        } else {
+            if (res) {
+                const salt = res.passwd_salt
+                const hashPassword = encryptPassword(password, salt)
+                if (res.password == hashPassword) {
+                    const payload = { sub: username, password: password }
+                    let access_token = this.jwtService.sign(payload)
+                    let userInfo = {
+                        user_id: res.user_id,
+                        username: res.username,
+                        email: res.email,
+                        role: res.role,
+                        choose_type: res.choose_type
+                    }
+                    // 用户信息字符串
+                    let userInfoStringfy = JSON.stringify(userInfo)
+                    // 返回 token
+                    let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy)
+                    // redis 存储token
+                    this.commonService.set(username, access_token)
+                    let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
+                    this.access_token = access_token
+                    this.exp = exptime
+                    return {
+                        access_token: return_token,
+                        exp: exptime
+                    }
+                } else {
+                    return {
+                        code: 50009,
+                        msg: '密码错误'
+                    }
                 }
             } else {
                 return {
-                    code: 50009,
-                    msg: '密码错误'
+                    code: 50008,
+                    msg: '未找到该用户信息'
                 }
-            }
-        } else {
-            return {
-                code: 50008,
-                msg: '未找到该用户信息'
             }
         }
     }
@@ -153,10 +165,10 @@ export class AuthService {
     }
 
     // 返回用户地图
-    async userMap(){
+    async userMap() {
         return 'https://www.ydkd.vip/ad782b2e3d9cfad0f9d3.html/a.html'
     }
-    
+
 
     // 上传文件
     async uploadFile(file) {

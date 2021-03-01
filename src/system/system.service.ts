@@ -1,15 +1,20 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CommonService } from 'src/common/common.service';
 import { iphone } from 'src/entities/phone.entity';
+import { UserEntity } from 'src/entities/user.entity';
 import { jsonParse } from 'src/utils/json';
 import { Repository } from 'typeorm';
+import { parseTime } from 'src/utils/index'
+import { encryptPassword } from 'src/utils/cryptogram';
 
 @Injectable()
 export class SystemService {
     constructor(
-        @InjectRepository(iphone) private readonly iphoneRepository: Repository<iphone>,
+        @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
         private readonly mailerService: MailerService,
+        private readonly commonService: CommonService
     ) { }
 
     /**
@@ -18,7 +23,7 @@ export class SystemService {
      */
     async getDeafultData(category) {
         let sql = category ? `SELECT * from categories WHERE category = '${category}';` : 'SELECT * from categories;'
-        let res = await this.iphoneRepository.query(sql)
+        let res = await this.userRepository.query(sql)
         res = jsonParse(res)
         return res
     }
@@ -31,7 +36,7 @@ export class SystemService {
     async saveConfigCategory(body, user_id) {
         let str = body.category + ',' + body.brand + ',' + body.product
         let sql = `UPDATE user_entity SET choose_type = '${str}' WHERE user_id = ${user_id}`
-        let res = await this.iphoneRepository.query(sql)
+        let res = await this.userRepository.query(sql)
         let msg = res.affectedRows == 1 ? '配置成功' : '配置失败'
         let code = res.affectedRows == 1 ? 200 : 201
         return {
@@ -54,5 +59,90 @@ export class SystemService {
         }).catch((error) => {
             return 201
         })
+    }
+
+
+    async getAllUser(id) {
+        let userInfo = await this.userRepository.find({ select: ['role'], where: { user_id: id } })
+        userInfo = jsonParse(userInfo)
+        if (userInfo[0].role == 3) {
+            let res = await this.userRepository.find({ select: ['username', 'email', 'role', 'user_status', 'create_time', 'effective_time', 'user_id', 'create_by', 'auth', 'user_login_place'], where: { user_status: 1 } })
+            let res2 = await this.userRepository.find({ select: ['username', 'email', 'role', 'user_status', 'create_time', 'effective_time', 'user_id', 'create_by', 'auth', 'user_login_place'], where: { user_status: 0 } })
+            res = jsonParse(res)
+            res2 = jsonParse(res2)
+            let total = [...res, ...res2]
+            return total
+        } else {
+            return {
+                code: 1,
+                msg: '权限不足，拒绝访问！'
+            }
+        }
+
+    }
+
+    async modifyUserData(data) {
+        let decryptData = this.commonService.decrypt(data)
+        let { user_id, username, effective_time, modify_username } = decryptData
+        effective_time = parseTime(effective_time, '{y}-{m}-{d} {h}:{i}:{s}')
+        let sql
+        if (modify_username) {
+            sql = `UPDATE user_entity SET effective_time = '${effective_time}', username = '${username}' WHERE user_id = ${user_id}`
+        } else {
+            sql = `UPDATE user_entity SET effective_time = '${effective_time}' WHERE user_id = ${user_id}`
+        }
+        let res = await this.userRepository.query(sql)
+        res = jsonParse(res)
+        if (res.affectedRows > 0) {
+            return {
+                code: 0,
+                msg: '修改成功'
+            }
+        } else {
+            return {
+                code: -1,
+                msg: '修改失败'
+            }
+        }
+    }
+
+    async resetPsw(user_id) {
+        let res = await this.userRepository.find({ select: ['passwd_salt'], where: { user_id: user_id } })
+        let res_obj = jsonParse(res)[0]
+        let passwd_salt = res_obj.passwd_salt
+        let new_hash_psw = encryptPassword('000000', passwd_salt)
+        let sql = `UPDATE user_entity SET password = '${new_hash_psw}' WHERE user_id = ${user_id}`
+        let result = await this.userRepository.query(sql)
+        result = jsonParse(result)
+        if (result.affectedRows > 0) {
+            return {
+                code: 0,
+                msg: '密码重置成功'
+            }
+        } else {
+            return {
+                code: -1,
+                msg: '密码重置失败'
+            }
+        }
+    }
+
+    async deleteUser(delete_id:string) {
+        let sql
+        let arr = delete_id.split(',')
+        sql = `UPDATE user_entity SET user_status = 2 WHERE FIND_IN_SET(user_id,'${delete_id}')`
+        let result = await this.userRepository.query(sql)
+        result = jsonParse(result)
+        if (result.affectedRows == arr.length) {
+            return {
+                code: 0,
+                msg: '删除成功'
+            }
+        } else {
+            return {
+                code: -1,
+                msg: '删除失败'
+            }
+        }
     }
 }

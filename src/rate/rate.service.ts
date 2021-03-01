@@ -37,7 +37,8 @@ export class RateService {
                 }
             }
         }
-        if (pending2) {
+        if (pending2) {  
+            
             max -= 200
             for (let i = 1; i <= (max - max % 100) / 100; i++) {
                 if (100 * (i + 1) < 1000) {

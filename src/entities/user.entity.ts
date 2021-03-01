@@ -65,6 +65,15 @@ export class UserEntity {
   update_time: Timestamp;
 
   @Column({
+    type: 'timestamp',
+    onUpdate: 'current_timestamp',
+    default: () => 'current_timestamp',
+    select: false,
+    comment: '有效日期'
+  })
+  effective_time: Timestamp;
+
+  @Column({
     type: 'varchar',
     default: '',
     comment: '用户路由列表'

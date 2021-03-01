@@ -1,13 +1,14 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { iphone } from 'src/entities/phone.entity';
+import { CommonModule } from 'src/common/common.module';
+import { UserEntity } from 'src/entities/user.entity';
 import { SystemController } from './system.controller';
 import { SystemService } from './system.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([iphone]),
+    TypeOrmModule.forFeature([UserEntity]),
     MailerModule.forRoot({
       transport: {
         host: "smtp.qq.com", //qq smtp服务器地址
@@ -18,7 +19,8 @@ import { SystemService } from './system.service';
           pass: "fjqijfexnlpmgabf"//授权码
         }
       }
-    })
+    }),
+    CommonModule
   ],
   controllers: [SystemController],
   providers: [SystemService]

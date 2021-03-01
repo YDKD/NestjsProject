@@ -3,7 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes } from 'crypto';
 import { UserEntity } from 'src/entities/user.entity';
-import { verifyCode } from 'src/utils';
+import { parseTime, verifyCode } from 'src/utils';
 import { encryptPassword } from 'src/utils/cryptogram';
 import { jsonParse } from 'src/utils/json';
 import { Repository } from 'typeorm';
@@ -73,7 +73,7 @@ export class UserService {
     let currUserId: number
     let salt = ''
     if (postCode.toLocaleLowerCase() == this.send_code.toLocaleLowerCase()) {
-      const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'], where: { user_status: 1 } })
+      const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'] })
       let currLastUser = jsonParse(res)
       if (currLastUser) {
         currUserId = currLastUser[currLastUser.length - 1].user_id + 1
@@ -84,7 +84,11 @@ export class UserService {
       }
 
       let hashPassword = encryptPassword(password, salt)
-      const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}')`)
+      let auth = '1,2,5,6,7,8,10,11,12,13,14,15,16,17,18',
+          time = new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+      let effective_time = parseTime(time, '{y}-{m}-{d} {h}:{i}:{s}')
+      console.log(effective_time)
+      const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email, auth, effective_time) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}', '${auth}', '${effective_time}')`)
       return {
         code: 200,
         data: result
@@ -244,8 +248,8 @@ export class UserService {
   }
 
   async resetEmail(data) {
-    let {user_id, send_code, new_email }  = data
-    if(this.send_code.toLocaleLowerCase() == send_code.toLocaleLowerCase()) {
+    let { user_id, send_code, new_email } = data
+    if (this.send_code.toLocaleLowerCase() == send_code.toLocaleLowerCase()) {
       let result = await this.userRepository.query(`UPDATE user_entity SET email = '${new_email}' WHERE user_id = ${user_id}`)
       if (result.affectedRows != 1) {
         return {
