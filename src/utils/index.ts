@@ -14,6 +14,7 @@ var fs = require('fs')
 var path = require('path')
 var result = 300
 var result_data: any
+var total: number
 var axios = require('axios')
 import { readFile, utils } from 'xlsx'
 function random(max, min) {
@@ -85,6 +86,7 @@ export function fileDisplay(filePath) {
                         sheet.M1.v,
                     ];
                     const data = utils.sheet_to_json(sheet, { defval: '' }); //通过工具将表对象的数据读出来并转成json
+                    total = data.length
                     const theadRule = [
                         'views_title',
                         'commit_id',
@@ -102,7 +104,6 @@ export function fileDisplay(filePath) {
                     ];
                     const isValid = thead.every((value, index) => value === theadRule[index]); //检验表字段
                     if (!isValid) {
-                        console.log(444)
                         result = 202
 
                     } else {
@@ -111,7 +112,6 @@ export function fileDisplay(filePath) {
                             data,
                             thead
                         }
-                        console.log(333)
                     }
                 }
             }
@@ -120,6 +120,7 @@ export function fileDisplay(filePath) {
             }
         }
     })
+    return total
 }
 
 // 确定用户的权限列表
@@ -212,5 +213,6 @@ export function rTime(date) {
 
 export {
     result,
-    result_data
+    result_data,
+    total
 }

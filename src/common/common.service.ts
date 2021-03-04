@@ -89,8 +89,24 @@ export class CommonService {
     }
 
     // 加密
-    async encrypt(data) {
-        return await key1.encrypt(data, 'base64')
+    async encrypt(data, isDecryptUser) {
+        if (isDecryptUser) {
+            return await key1.encrypt(data, 'base64')
+        } else {
+            let userDetailBs64 = JSON.stringify(data)
+            var strBs64Arr = []
+            var n = 117
+            for (var i = 0, l = userDetailBs64.length; i < l / n; i++) {
+                var a = userDetailBs64.slice(n * i, n * (i + 1))
+                strBs64Arr.push(a)
+            }
+            let rsaBs64 = []
+            strBs64Arr.forEach(item => {
+                rsaBs64.push(key1.encrypt(item, 'base64'))
+            })
+            let rsaBs64Str = rsaBs64.join(':')
+            return await rsaBs64Str
+        }
     }
 
 }

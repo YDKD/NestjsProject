@@ -60,6 +60,8 @@ export class UserService {
     return jsonParse(result)[0]
   }
 
+
+  
   /**
    * @name: 用户注册
    * @param {*} username
@@ -69,26 +71,35 @@ export class UserService {
    */
   async createUser(data) {
     // 解密
-    let { postCode, username, password, email } = await this.commonService.decrypt(data)
-    let currUserId: number
+    let { postCode, username, password, email, is_register, effective_time } = await this.commonService.decrypt(data)
+    let currUserId: any
     let salt = ''
-    if (postCode.toLocaleLowerCase() == this.send_code.toLocaleLowerCase()) {
+    if (!is_register || postCode.toLocaleLowerCase() == this.send_code.toLocaleLowerCase()) {
       const res = await this.userRepository.find({ select: ['user_id', 'passwd_salt'] })
       let currLastUser = jsonParse(res)
+      currUserId = await this.userRepository.query(`SELECT MAX(user_id) FROM user_entity`)
+      currUserId = jsonParse(currUserId)
+      currUserId = currUserId[0]['MAX(user_id)'] + 1
       if (currLastUser) {
-        currUserId = currLastUser[currLastUser.length - 1].user_id + 1
         salt = currLastUser[currLastUser.length - 1].passwd_salt
       } else {
         currUserId = 67100
         salt = 'dasd'
       }
-
       let hashPassword = encryptPassword(password, salt)
-      let auth = '1,2,5,6,7,8,10,11,12,13,14,15,16,17,18',
-          time = new Date().getTime() + 7 * 24 * 60 * 60 * 1000
-      let effective_time = parseTime(time, '{y}-{m}-{d} {h}:{i}:{s}')
-      console.log(effective_time)
-      const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email, auth, effective_time) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}', '${auth}', '${effective_time}')`)
+      // 获取路由列表默认权限路由
+      let auth = await this.userRepository.query(`SELECT id FROM router_list WHERE default_check = 0`)
+      auth = jsonParse(auth)
+      let auth_arr = auth
+      let auth_id_arr = []
+      auth_arr.map(item => {
+        auth_id_arr.push(item.id)
+      })
+      let auth_id_str
+      auth_id_str = auth_id_arr.join(',')
+      let time = new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+      let effective_time_to_sql = effective_time > 0 ? parseTime(effective_time, '{y}-{m}-{d} {h}:{i}:{s}') : parseTime(time, '{y}-{m}-{d} {h}:{i}:{s}')
+      const result = await this.userRepository.query(`INSERT INTO user_entity (user_id, username, password, email, auth, effective_time, role) VALUES(${currUserId},'${username}', '${hashPassword}', '${email}', '${auth_id_str}', '${effective_time_to_sql}', 1)`)
       return {
         code: 200,
         data: result

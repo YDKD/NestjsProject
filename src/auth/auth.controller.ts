@@ -52,7 +52,7 @@ export class AuthController {
 
     @Post('/encrypt')
     async encryptData(@Body() body) {
-        return await this.authService.encryptData(body.data)
+        return await this.authService.encryptData(body.data, true)
     }
 
     @Get('/logout/:username')
@@ -72,25 +72,31 @@ export class AuthController {
     }
 
     @Post('/upload')
+    @HttpCode(200)
     @ApiOperation({ summary: '上传文件' })
     @UseInterceptors(FileFieldsInterceptor([
         { name: 'file', maxCount: 1 }
     ]))
-    async upload(@UploadedFiles() files) {
+    async upload(@UploadedFiles() files, @Body() body) {
         if (JSON.stringify(files) == '{}') {
             return {
                 code: 201,
                 msg: '上传文件为空'
             }
         } else {
-            let { code, msg } = await this.authService.uploadFile(files['file'][0])
-            return {
-                code,
-                msg
-            }
+            let res = await this.authService.uploadFile(
+                files['file'][0],
+                body['note_user_id'],
+                body['category'],
+                body['upload_user_name'],
+                body['brand'],
+                body['product']
+            )
+            return res
         }
 
     }
+
 
     @Get('/user_router_list/:username')
     @ApiOperation({ summary: '根据用户名获取用户的路由列表' })
@@ -102,5 +108,15 @@ export class AuthController {
     @ApiOperation({ summary: '获取用户登录地址可视化' })
     async getMap() {
         return await this.authService.userMap()
+    }
+
+    @Get('/tables/:id')
+    async getTables(@Param('id') id) {
+        return await this.authService.getTables(id)
+    }
+
+    @Get('/upload/status')
+    async getUploadStatus() {
+        return await this.authService.getUploadTables()
     }
 }

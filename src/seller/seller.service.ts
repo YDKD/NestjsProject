@@ -45,7 +45,7 @@ export class SellerService {
         // 统计交易量
         let sql_account_product = `SELECT city, views_sales, views_price * views_price as 'total_amount' FROM ${user_choose_product} WHERE city != ''`
         // 统计相同城市数
-        let sql_account_city = `SELECT city, COUNT(id) FROM ${user_choose_product} GROUP BY city`
+        let sql_account_city = `SELECT city, COUNT(id) FROM ${user_choose_product} WHERE city != '' GROUP BY city`
         let res_product = await this.iphoneRepository.query(sql_account_product)
         let res_city = await this.iphoneRepository.query(sql_account_city)
         res_product = jsonParse(res_product)

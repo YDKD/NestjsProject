@@ -129,7 +129,7 @@ export class SystemService {
 
     async deleteUser(delete_id:string) {
         let sql
-        let arr = delete_id.split(',')
+        let arr = delete_id.length > 0 ? delete_id.split(',') : [delete_id]
         sql = `UPDATE user_entity SET user_status = 2 WHERE FIND_IN_SET(user_id,'${delete_id}')`
         let result = await this.userRepository.query(sql)
         result = jsonParse(result)

@@ -66,10 +66,8 @@ export class UserEntity {
 
   @Column({
     type: 'timestamp',
-    onUpdate: 'current_timestamp',
+    comment: '有效日期',
     default: () => 'current_timestamp',
-    select: false,
-    comment: '有效日期'
   })
   effective_time: Timestamp;
 
