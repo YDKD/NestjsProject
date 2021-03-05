@@ -111,11 +111,13 @@ export class AuthController {
     }
 
     @Get('/tables/:id')
+    @ApiOperation({summary: '管理员下获取数据库的表'})
     async getTables(@Param('id') id) {
         return await this.authService.getTables(id)
     }
 
     @Get('/upload/status')
+    @ApiOperation({summary: '获取上传文件的状态'})
     async getUploadStatus() {
         return await this.authService.getUploadTables()
     }

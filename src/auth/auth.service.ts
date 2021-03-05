@@ -77,8 +77,8 @@ export class AuthService {
         effective_time = rTime(effective_time)
         let eff_time_stamp = new Date(effective_time).getTime()
         let current_time_stamp = new Date().getTime()
-        let res2 = await this.iphoneRepository.query(`SELECT * FROM user_entity WHERE username = '${username}'`)
         if (current_time_stamp > eff_time_stamp) {
+            await this.iphoneRepository.query(`UPDATE user_entity SET user_status = 0 WHERE user_id = ${res.user_id}`)
             return {
                 code: 50007,
                 msg: '账号已过期'
