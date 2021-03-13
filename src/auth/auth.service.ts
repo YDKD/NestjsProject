@@ -73,7 +73,7 @@ export class AuthService {
     async login(username, password) {
         let res = await this.iphoneRepository.query(`SELECT * FROM user_entity WHERE username = '${username}'`)
         res = jsonParse(res)[0]
-        if (!res || res.user_status == 0) {
+        if (!res || res.user_status == 2) {
             return {
                 code: 50008,
                 msg: '未找到该用户信息'
