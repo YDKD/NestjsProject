@@ -73,56 +73,56 @@ export class AuthService {
     async login(username, password) {
         let res = await this.iphoneRepository.query(`SELECT * FROM user_entity WHERE username = '${username}'`)
         res = jsonParse(res)[0]
-        let effective_time = res.effective_time
-        effective_time = rTime(effective_time)
-        let eff_time_stamp = new Date(effective_time).getTime()
-        let current_time_stamp = new Date().getTime()
-        if (current_time_stamp > eff_time_stamp) {
-            await this.iphoneRepository.query(`UPDATE user_entity SET user_status = 0 WHERE user_id = ${res.user_id}`)
+        if (!res || res.user_status == 1) {
             return {
-                code: 50007,
-                msg: '账号已过期'
+                code: 50008,
+                msg: '未找到该用户信息'
             }
         } else {
-            if (res) {
-                const salt = res.passwd_salt
-                const hashPassword = encryptPassword(password, salt)
-                if (res.password == hashPassword) {
-                    const payload = { sub: username, password: password }
-                    let access_token = this.jwtService.sign(payload)
-                    let userInfo = {
-                        user_id: res.user_id,
-                        username: res.username,
-                        email: res.email,
-                        role: res.role,
-                        choose_type: res.choose_type
-                    }
-                    // 用户信息字符串
-                    let userInfoStringfy = JSON.stringify(userInfo)
-                    // 返回 token
-                    let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy, true)
-                    // redis 存储token
-                    this.commonService.set(username, access_token)
-                    let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
-                    this.access_token = access_token
-                    this.exp = exptime
-                    return {
-                        access_token: return_token,
-                        exp: exptime
-                    }
-                } else {
-                    return {
-                        code: 50009,
-                        msg: '密码错误'
-                    }
+            let effective_time = res.effective_time
+            effective_time = rTime(effective_time)
+            let eff_time_stamp = new Date(effective_time).getTime()
+            let current_time_stamp = new Date().getTime()
+            if (res.user_status == 0 || current_time_stamp > eff_time_stamp) {
+                await this.iphoneRepository.query(`UPDATE user_entity SET user_status = 0 WHERE user_id = ${res.user_id}`)
+                return {
+                    code: 50007,
+                    msg: '账号已过期'
+                }
+            }
+            const salt = res.passwd_salt
+            const hashPassword = encryptPassword(password, salt)
+            if (res.password == hashPassword) {
+                const payload = { sub: username, password: password }
+                let access_token = this.jwtService.sign(payload)
+                let userInfo = {
+                    user_id: res.user_id,
+                    username: res.username,
+                    email: res.email,
+                    role: res.role,
+                    choose_type: res.choose_type
+                }
+                // 用户信息字符串
+                let userInfoStringfy = JSON.stringify(userInfo)
+                // 返回 token
+                let return_token = access_token + ':' + await this.commonService.encrypt(userInfoStringfy, true)
+                // redis 存储token
+                this.commonService.set(username, access_token)
+                let exptime = this.jwtService.verify(this.jwtService.sign(payload)).exp * 1000
+                this.access_token = access_token
+                this.exp = exptime
+                return {
+                    access_token: return_token,
+                    exp: exptime
                 }
             } else {
                 return {
-                    code: 50008,
-                    msg: '未找到该用户信息'
+                    code: 50009,
+                    msg: '密码错误'
                 }
             }
         }
+
     }
 
     async userRouterList(username) {
@@ -272,7 +272,7 @@ export class AuthService {
                     let time = parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}:{s}')
                     product = product.toLowerCase()
                     let inser_into_upload_info_sql = `INSERT INTO upload_info (filename, upload_user_name, create_time, upload_status, msg, upload_table) VALUES('${file['originalname']}', '${upload_user_name}', '${time}', ${this.upload_status}, '${this.msg}', '${product}')`
-                     await this.iphoneRepository.query(inser_into_upload_info_sql)
+                    await this.iphoneRepository.query(inser_into_upload_info_sql)
                 }
 
             })
@@ -308,7 +308,7 @@ export class AuthService {
         }
     }
 
-    async getUploadTables(){
+    async getUploadTables() {
         let res = await this.iphoneRepository.query(`SELECT * FROM upload_info `)
         res = jsonParse(res)
         return res
