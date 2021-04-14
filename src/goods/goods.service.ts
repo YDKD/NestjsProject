@@ -18,8 +18,8 @@ export class GoodsService {
         let checkTable = await this.userService.getUserConfigCheck(user_id)
         let sql = `SELECT * from ${checkTable} LIMIT ${currentPage - 1}, ${pageSize}`
         let result = await this.iphonRepository.query(sql)
-        let total = jsonParse(await this.iphonRepository.findAndCount())
-        total = total[1]
+        let total = jsonParse(await this.iphonRepository.query(`SELECT COUNT('user_id') FROM ${checkTable}`))
+        total = parseInt(total[0]["COUNT('user_id')"]) || 0
         result = jsonParse(result)
         // let result = await this.iphonRepository.findAndCount({ skip: currentPage - 1, take: pageSize })
         return {

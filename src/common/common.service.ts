@@ -67,7 +67,7 @@ export class CommonService {
         }
     }
 
-    //获取值的方法
+    //Redis获取值的方法
     async get(key: string) {
         if (!this.client) {
             await this.getClient();

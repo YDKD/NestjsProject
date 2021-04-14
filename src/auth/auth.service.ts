@@ -187,10 +187,10 @@ export class AuthService {
                 let filePath = './decompression'
                 await fileDisplay(filePath)
                 if (result == 201) {
-                    this.upload_status = 1
+                    this.upload_status = -1
                     this.msg = '文件读取失败'
                 } else if (result == 202) {
-                    this.upload_status = 2
+                    this.upload_status = -2
                     this.msg = 'Excel表格式不对'
                 } else {
                     this.msg = '文件上传解析成功'
@@ -244,47 +244,52 @@ export class AuthService {
                     tables.map(item => {
                         tables_arr.push(item['Tables_in_test'])
                     })
-                    if (tables_arr.includes(product.toLowerCase())) {
-                        this.upload_status = 4
-                        this.msg = '数据库创建成功,插入数据中'
+                    if (!tables_arr.includes(product.toLowerCase())) {
+                        this.upload_status = -3
+                        this.msg = '数据库创建失败'
+                    } else {
+                        // 编写插入数据的SQL
+                        let insert_sql = `INSERT INTO ${product} (id, views_title, commit_id, img_pat, views_price, view_fee, province, city, views_sales, comment_count, shop_name, detail_url, comment_url, shop_link) VALUES `
+                        insertData.map(item => {
+                            let tmp_value = ''
+                            for (let i in item) {
+                                tmp_value += `'${item[i]}',`
+                            }
+                            tmp_value = tmp_value.substring(0, tmp_value.length - 1)
+                            insert_sql += `(${tmp_value}),`
+                        })
+                        insert_sql = insert_sql.substring(0, insert_sql.length - 1)
+                        let insert_res = await this.iphoneRepository.query(insert_sql)
+                        if (insert_res.affectedRows == insertData.length) {
+                            this.upload_status = 3
+                            this.msg = '数据全部插入成功'
+                        } else {
+                            this.upload_status = 2
+                            this.msg = '部分数据插入成功'
+                        }
                     }
 
-                    // 编写插入数据的SQL
-                    let insert_sql = `INSERT INTO ${product} (id, views_title, commit_id, img_pat, views_price, view_fee, province, city, views_sales, comment_count, shop_name, detail_url, comment_url, shop_link) VALUES `
-                    insertData.map(item => {
-                        let tmp_value = ''
-                        for (let i in item) {
-                            tmp_value += `'${item[i]}',`
-                        }
-                        tmp_value = tmp_value.substring(0, tmp_value.length - 1)
-                        insert_sql += `(${tmp_value}),`
-                    })
-                    insert_sql = insert_sql.substring(0, insert_sql.length - 1)
-                    let insert_res = await this.iphoneRepository.query(insert_sql)
-                    if (insert_res.affectedRows == insertData.length) {
-                        this.upload_status = 5
-                        this.msg = '数据全部插入成功'
-                    } else {
-                        this.upload_status = 6
-                        this.msg = '部分数据插入成功'
-                    }
-                    // 入库上传信息
-                    let time = parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}:{s}')
-                    product = product.toLowerCase()
-                    let inser_into_upload_info_sql = `INSERT INTO upload_info (filename, upload_user_name, create_time, upload_status, msg, upload_table) VALUES('${file['originalname']}', '${upload_user_name}', '${time}', ${this.upload_status}, '${this.msg}', '${product}')`
-                    await this.iphoneRepository.query(inser_into_upload_info_sql)
+
                 }
+                // 入库上传信息
+                let time = parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}:{s}')
+                product = product.toLowerCase()
+                let inser_into_upload_info_sql = `INSERT INTO upload_info (filename, upload_user_name, create_time, upload_status, msg, upload_table) VALUES('${file['originalname']}', '${upload_user_name}', '${time}', ${this.upload_status}, '${this.msg}', '${product}')`
+                let tp = await this.iphoneRepository.query(inser_into_upload_info_sql)
+                console.log(tp)
 
             })
             .catch(err => {
+                console.log(err)
                 return err
             });
         return {
-            // filename: file['originalname'],
-            // upload_user_name: upload_user_name,
-            // create_time: new Date().getTime(),
-            // msg: this.msg,
-            // upload_status: this.upload_status
+            filename: file['originalname'],
+            upload_user_name: upload_user_name,
+            create_time: new Date().getTime(),
+            msg: this.msg,
+            upload_status: this.upload_status
+
         }
     }
 
